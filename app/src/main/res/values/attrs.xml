@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--“我”页面自定义控件 参数-->
+    <declare-styleable name="ItemLinearLayout">
+        <!--图标-->
+        <attr name="icon_drawable" format="reference|integer" />
+        <!--图标对应的文字-->
+        <attr name="icon_text" format="string" />
+    </declare-styleable>
+
+    <!--自定义标题栏-->
+    <declare-styleable name="CustomizedTitleBar">
+        <!--标题栏返回图标-->
+        <attr name="title_back_icon" format="reference|integer" />
+        <!--左侧图标按钮是否可见-->
+        <attr name="title_back_icon_visible" format="boolean" />
+        <!--标题栏文字-->
+        <attr name="title_text" format="string" />
+    </declare-styleable>
+
+</resources>

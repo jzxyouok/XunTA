@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.zhenai.xunta.widget.CustomizedTitleBar
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:title_back_icon_visible="true"
+        app:title_back_icon="@drawable/arrow_left"
+        app:title_text="注册">
+    </com.zhenai.xunta.widget.CustomizedTitleBar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+        <ImageView
+            android:id="@+id/iv_register_phone"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/arrow"/>
+        <EditText
+            android:id="@+id/et_register_telphone_number"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/iv_register_phone"
+            android:inputType="number"
+            android:background="@null"
+            android:hint="请输入手机号"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignBottom="@+id/et_register_telphone_number"
+            android:layout_marginStart="40dp"
+            android:background="@color/black"/>
+        <Button
+            android:id="@+id/btn_register_validate_code"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/btn_border_bg"
+            android:textSize="14sp"
+            android:text="获取验证码"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+        <ImageView
+            android:id="@+id/iv_register_validate_code"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/arrow"/>
+        <EditText
+            android:id="@+id/et_register_validate_code"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/iv_register_validate_code"
+            android:background="@null"
+            android:inputType="number"
+            android:hint="请输入验证码"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignBottom="@+id/et_register_validate_code"
+            android:layout_marginStart="40dp"
+            android:background="@color/black"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp">
+        <ImageView
+            android:id="@+id/iv_register_password"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/arrow"/>
+        <EditText
+            android:id="@+id/et_register_password"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/iv_register_password"
+            android:background="@null"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:hint="请重新输入6-20位英文或数字密码"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignBottom="@+id/et_register_password"
+            android:layout_marginStart="40dp"
+            android:background="@color/black"/>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btn_register_next"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_border_bg"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="下一步"/>
+
+</LinearLayout>
