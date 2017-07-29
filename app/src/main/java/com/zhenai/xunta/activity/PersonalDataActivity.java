@@ -77,15 +77,15 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
     private ArrayList<JsonBean> options1Items = new ArrayList<>();
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
     private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
-    private Thread thread;
-    private static final int MSG_LOAD_DATA = 0x0001;
-    private static final int MSG_LOAD_SUCCESS = 0x0002;
-    private static final int MSG_LOAD_FAILED = 0x0003;
-    private boolean isLoaded = false;
 
-    private String nickName, sex, district, birthdata ;
+    private String nickName, sex, districtName, birthdata ;
+
+    boolean isImageUploaded = false;
     boolean isTimeSelected = false;
     boolean isDistrictSelected = false;
+
+    File outputImage = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +99,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
         mPop.setOnItemClickListener(this);
     }
 
-    private void initViews() {
+    public void initViews() {
         mLinearLayoutAvatar = findViewById(R.id.ll_upload_avatar);
         mTvHint = findViewById(R.id.tv_hint);
         mEtNickname = findViewById(R.id.et_set_nickname);
@@ -114,7 +114,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
         mBtnDone = findViewById(R.id.btn_done);
     }
 
-    private void setListeners() {
+    public void setListeners() {
         mLinearLayoutAvatar.setOnClickListener(this);
         mBtnDistrict.setOnClickListener(this);
         mBtnBirthDate.setOnClickListener(this);
@@ -129,7 +129,6 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                 break;
 
             case R.id.btn_select_district:
-                //条件选择器
                 ShowPickerView();
                 break;
 
@@ -147,7 +146,9 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                     @Override
                     public void onTimeSelect(Date date, View v) {//选中事件回调
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
-                       mBtnBirthDate.setText(sdf.format(date));
+                        birthdata = sdf.format(date);
+                        mBtnBirthDate.setText(birthdata);
+                        Log.e("tag",birthdata);
                         isTimeSelected = true;
                     }
                 })
@@ -163,8 +164,17 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
 
             case R.id.btn_done: //完成，提交数据到服务器并进入主界面
                 String regex = "[a-zA-Z0-9_\u4e00-\u9fa5]+";
+                String regexPureNumber = "^\\d+$";
                 nickName = mEtNickname.getText().toString();
-                if (!nickName.matches(regex)){
+                if(isImageUploaded == false) {
+                    ShowToast.showToast("未上传头像哦~");
+                }else if (nickName.length() == 0){
+                    ShowToast.showToast("请输入昵称~");
+                }else if(nickName.length() > 8){
+                    ShowToast.showToast("昵称太长啦~");
+                }else if (nickName.matches(regexPureNumber)){
+                    ShowToast.showToast("昵称不能由纯数字组成组成~");
+                }else if (!nickName.matches(regex)){
                     ShowToast.showToast("昵称只能由汉字、数字、字母和下划线组成~");
                 }else if(nickName.length() > 8){
                     ShowToast.showToast("昵称太长啦~");
@@ -177,23 +187,31 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                 }else{
                     // TODO: 2017/7/27   向服务器发请求
                     postPersonalData();
+
+                    //跳转到登录页
+                    Intent intent = new Intent(PersonalDataActivity.this, LoginActivity.class);
+                    startActivity(intent);
                 }
                 break;
         }
 
     }
 
-
-
-    private void postPersonalData() {
+    public void postPersonalData() {
 
         Map<String, String> map = new HashMap<>();
         nickName = mEtNickname.getText().toString();
-
+        Log.e("tag",nickName);
         if (mRadioBtnMale.isChecked()){
              sex = "男";
         }else {
             sex = "女";
+        }
+        Log.e("tag",sex);
+        if (outputImage.exists()){
+
+        }else {
+            Log.e("tag","头像不存在");
         }
 
     }
@@ -222,7 +240,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
 
     public void take_photo(){
         // 创建File对象，用于存储拍照后的图片
-        File outputImage = new File(getExternalCacheDir(), "output_image.jpg");
+        outputImage = new File(getExternalCacheDir(), "output_image.jpg");
         try {
             if (outputImage.exists()) {
                 outputImage.delete();
@@ -242,7 +260,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
         startActivityForResult(intent, TAKE_PHOTO);
     }
 
-    private void openAlbum() {
+    public void openAlbum() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
         startActivityForResult(intent, CHOOSE_PHOTO); // 打开相册
@@ -279,6 +297,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                                         Drawable drawable = new BitmapDrawable(resource);
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                                             mLinearLayoutAvatar.setBackground(drawable);
+                                            isImageUploaded = true;
                                         }
                                     }
                                 });
@@ -308,7 +327,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
     }
 
     @TargetApi(19)
-    private void handleImageOnKitKat(Intent data) {
+    public void handleImageOnKitKat(Intent data) {
         String imagePath = null;
         Uri uri = data.getData();
         Log.d("TAG", "handleImageOnKitKat: uri is " + uri);
@@ -333,13 +352,13 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
         displayImage(imagePath); // 根据图片路径显示图片
     }
 
-    private void handleImageBeforeKitKat(Intent data) {
+    public void handleImageBeforeKitKat(Intent data) {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
         displayImage(imagePath);
     }
 
-    private String getImagePath(Uri uri, String selection) {
+    public String getImagePath(Uri uri, String selection) {
         String path = null;
         // 通过Uri和selection来获取真实的图片路径
         Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
@@ -352,18 +371,18 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
         return path;
     }
 
-    private void displayImage(String imagePath) {
+    public void displayImage(String imagePath) {
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             mLinearLayoutAvatar.setBackground(new BitmapDrawable(bitmap));
+            isImageUploaded = true;
             mTvHint.setVisibility(View.INVISIBLE);
         } else {
             ShowToast.showToast("获取头像失败");
         }
     }
 
-
-    private void initJsonData() {
+    public void initJsonData() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -439,16 +458,23 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
         return detail;
     }
 
-    private void ShowPickerView() {
+    public void ShowPickerView() {
 
         OptionsPickerView pvOptions = new OptionsPickerView.Builder(this, new OptionsPickerView.OnOptionsSelectListener() {
             @Override
             public void onOptionsSelect(int options1, int options2, int options3, View v) {
                 //返回的分别是三个级别的选中位置
-                String tx = options1Items.get(options1).getPickerViewText()+
-                        options2Items.get(options1).get(options2)+
-                        options3Items.get(options1).get(options2).get(options3);
-                mBtnDistrict.setText(tx);
+                String province = options1Items.get(options1).getPickerViewText();
+                String city = options2Items.get(options1).get(options2);
+                String district = options3Items.get(options1).get(options2).get(options3);
+
+                if(province.equals(city)){
+                    districtName = province + district;
+                }else {
+                    districtName = province + city+ district;
+                }
+                mBtnDistrict.setText(districtName);
+                Log.e("tag",districtName);
                 isDistrictSelected = true;
             }
         })
@@ -459,8 +485,6 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                 .setOutSideCancelable(false)// default is true
                 .build();
 
-       // pvOptions.setPicker(options1Items);//一级选择器
-        //pvOptions.setPicker(options1Items, options2Items);//二级选择器*/
         pvOptions.setPicker(options1Items, options2Items,options3Items);//三级选择器
         pvOptions.show();
     }

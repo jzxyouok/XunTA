@@ -59,7 +59,7 @@ public class LoginActivity  extends Activity implements ILoginView, View.OnClick
     public void toMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
-        finish(); //失效的原因：LoginActivity页面finish ，LaunchActivity没有finish。解决：发广播
+        finish(); //失效的原因：LoginActivity页面finish ，LaunchActivity没有finish。解决
     }
 
     @Override

@@ -34,6 +34,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:inputType="number"
+            android:text="18888888888"
             android:hint="请输入手机号" />
 
     </LinearLayout>
@@ -41,28 +42,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal"
+        android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp">
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:src="@drawable/arrow"/>
+            android:src="@drawable/arrow" />
+
         <EditText
             android:id="@+id/et_password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
             android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:maxLength="20"
             android:maxLines="1"
             android:singleLine="true"
-            android:maxLength="20"
+            android:text="1234567"
             android:hint="请输入密码"/>
 
     </LinearLayout>
-    
+
     <Button
         android:id="@+id/btn_login"
         android:layout_width="100dp"
