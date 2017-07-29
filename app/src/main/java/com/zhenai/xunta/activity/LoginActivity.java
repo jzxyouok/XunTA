@@ -64,7 +64,7 @@ public class LoginActivity  extends Activity implements ILoginView, View.OnClick
 
     @Override
     public void showLoginError() {
-        ShowToast.showToast("账号或密码有误，请稍后重试");
+        ShowToast.showToast("账号或密码有误，请重新输入");
     }
 
     @Override

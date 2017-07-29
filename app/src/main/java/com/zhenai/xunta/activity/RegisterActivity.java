@@ -11,7 +11,16 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.zhenai.xunta.R;
+import com.zhenai.xunta.utils.HttpUtil;
 import com.zhenai.xunta.utils.ShowToast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * 注册页面
@@ -64,10 +73,28 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
             case R.id.btn_register_validate_code:
                 phoneNumber = mEtPhoneNumber.getText().toString(); //获取输入的手机号
                 if (phoneNumber.length() == 11 && phoneNumber.matches("^1[34578]\\d{9}$") && (btnClickedCount <=3 )) {
-                    validateCodeFromServer =  httpPostRequest(phoneNumber); //向服务器发Post请求，得到服务器返回的验证码
+
+                    HttpUtil.sendPostRequestWithOkHttp("http://10.1.3.39:8080/login","phone", phoneNumber, new okhttp3.Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            ShowToast.showToast("网络异常");
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String responseData = response.body().string();
+                            try {
+                                JSONObject jsonObject = new JSONObject(responseData);
+                                validateCodeFromServer = jsonObject.getString("resultCode"); //服务器返回码
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
                     mTimeCount.start();
                     btnClickedCount++;
-                   // Log.e("tag", "btnClickedCount:" +btnClickedCount + "");
+
                 }else if(btnClickedCount > 3){
                     ShowToast.showToast("操作太过频繁，请明天再试！");
                 }else {
@@ -92,46 +119,6 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
         }
     }
 
-    //返回验证码
-    private String httpPostRequest(final String phoneNumberString) {
-
-        String responseCode = "";
-
-/*        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new FormBody.Builder()
-                        .add("phoneNumber",phoneNumberString)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url("xxx")
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    if (response != null){
-                        String responseData = response.body().toString();
-
-                        //解析返回的Json
-                        int stateCode = 1;//返回登录状态码
-                        if (1 == stateCode){
-
-                        }else{
-
-                            //ShowToast.showToast("账号或密码有误，请稍后重试");
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }).start();*/
-
-        return  "1234";
-    }
 
     class TimeCount extends CountDownTimer {
 

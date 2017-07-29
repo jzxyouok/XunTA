@@ -388,17 +388,16 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
             public void run() {
 
                 /**
-                 * 注意：assets 目录下的Json文件仅供参考，实际使用可自行替换文件
+                 * assets 目录下的Json文件，实际使用可自行替换文件
                  * 关键逻辑在于循环体
                  * */
                 String JsonData = new GetJsonDataUtil().getJson(PersonalDataActivity.this,"province.json");//获取assets目录下的json文件数据
-
                 ArrayList<JsonBean> jsonBean = parseData(JsonData);//用Gson 转成实体
 
                 /**
                  * 添加省份数据
                  *
-                 * 注意：如果是添加的JavaBean实体，则实体类需要实现 IPickerViewData 接口，
+                 * 如果是添加的JavaBean实体，则实体类需要实现 IPickerViewData 接口，
                  * PickerView会通过getPickerViewText方法获取字符串显示出来。
                  */
                 options1Items = jsonBean;
