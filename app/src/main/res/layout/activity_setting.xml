@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.zhenai.xunta.widget.CustomizedTitleBar
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:title_back_icon_visible="true"
+        app:title_back_icon="@drawable/arrow_left"
+        app:title_text="设置">
+    </com.zhenai.xunta.widget.CustomizedTitleBar>
+
+    <com.zhenai.xunta.widget.ItemSettingLayout
+        android:id="@+id/change_password"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:text="修改密码"/>
+
+    <com.zhenai.xunta.widget.ItemSettingLayout
+        android:id="@+id/feedback"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:text="意见反馈"/>
+    <com.zhenai.xunta.widget.ItemSettingLayout
+        android:id="@+id/report"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:text="不良信息举报"/>
+
+    <com.zhenai.xunta.widget.ItemSettingLayout
+        android:id="@+id/about_us"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:text="关于我们"/>
+    <com.zhenai.xunta.widget.ItemSettingLayout
+        android:id="@+id/wipe_cache"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:text="清除缓存"/>
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:background="@drawable/btn_border_bg"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"
+        android:text="退出登录"/>
+</LinearLayout>

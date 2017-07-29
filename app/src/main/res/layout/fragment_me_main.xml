@@ -16,11 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:title_back_icon_visible="false"
-            app:title_back_icon="@drawable/arrow"
+            app:title_back_icon="@drawable/arrow_left"
             app:title_text="我">
-
         </com.zhenai.xunta.widget.CustomizedTitleBar>
-
 
         <!--个人资料-->
         <RelativeLayout
@@ -104,7 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:icon_drawable="@drawable/release"
-                app:icon_text="我的购买"/>
+                app:icon_text="我的预约"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/my_focus"
@@ -133,6 +131,13 @@
                 android:layout_height="wrap_content"
                 app:icon_drawable="@drawable/member_center"
                 app:icon_text="个性化展示"/>
+
+            <com.zhenai.xunta.widget.ItemLinearLayout
+                android:id="@+id/my_certification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:icon_drawable="@drawable/member_center"
+                app:icon_text="我的认证"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/setting"

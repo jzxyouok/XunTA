@@ -9,6 +9,12 @@
         <attr name="icon_text" format="string" />
     </declare-styleable>
 
+    <!--“我”页面自定义控件 参数-->
+    <declare-styleable name="ItemSettingLayout">
+        <!--文字-->
+        <attr name="text" format="string" />
+    </declare-styleable>
+
     <!--自定义标题栏-->
     <declare-styleable name="CustomizedTitleBar">
         <!--标题栏返回图标-->

@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -80,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
 /*    @Override
     public void onTabSelected(int position) {
-        Log.d("tag", "onTabSelected() called with: " + "position = [" + position + "]");
 
         if (fragments != null) {
             if (position < fragments.size()) {
@@ -102,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
     @Override
     public void onTabSelected(int position) {
-        Log.e("TAG", "onTabSelected() called with: " + "position = [" + position + "]");
         FragmentManager fm = this.getSupportFragmentManager();
         //开启事务
         FragmentTransaction transaction = fm.beginTransaction();
@@ -140,9 +137,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 
     @Override
     public void onTabUnselected(int position) {
-        Log.e("TAG", "onTabUnselected() called with: " + "position = [" + position + "]");
-
-        if (fragments != null) {
+/*        if (fragments != null) {
             if (position < fragments.size()) {
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
@@ -151,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 ft.commitAllowingStateLoss();
                 // ft.commit();
             }
-        }
+        }*/
 
     }
 

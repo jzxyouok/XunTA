@@ -1,14 +1,20 @@
 package com.zhenai.xunta.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.zhenai.xunta.R;
 import com.zhenai.xunta.utils.HttpUtil;
@@ -31,10 +37,13 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
 
     private EditText mEtPhoneNumber, mEtValidateCode, mEtPassword;
     private Button mBtnSendValidateCode, mBtnNext;
+    private TextView mTvProtocol, mTvDisclaimer;
 
     private int btnClickedCount = 0; //记录发送验证码Button点击的次数
-    String phoneNumber;
-    String validateCodeFromServer ; //服务器返回的验证码
+    String phoneNumber = "";
+    String validateCodeFromServer = "" ; //服务器返回的验证码
+    String validateCodeInput = "";
+    String password = "";
 
     private TimeCount mTimeCount;//计时器
 
@@ -52,10 +61,14 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
     private void initViews() {
         mEtPhoneNumber = findViewById(R.id.et_register_telphone_number);
         mEtValidateCode = findViewById(R.id.et_register_validate_code);
+
         mEtPassword = findViewById(R.id.et_register_password);
+        mEtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());//显示密文
 
         mBtnSendValidateCode = findViewById(R.id.btn_register_validate_code);
         mBtnNext = findViewById(R.id.btn_register_next);
+        mTvProtocol = findViewById(R.id.tv_protocol);
+        mTvDisclaimer = findViewById(R.id.tv_disclaimer);
 
         mTimeCount = new TimeCount(60000, 1000);
     }
@@ -63,6 +76,13 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
     private void setListeners() {
         mBtnSendValidateCode.setOnClickListener(this);
         mBtnNext.setOnClickListener(this);
+        mTvProtocol.setOnClickListener(this);
+        mTvDisclaimer.setOnClickListener(this);
+
+        //为EditText绑定监听器
+        mEtPhoneNumber.addTextChangedListener(new TextChangeListener(mEtPhoneNumber));
+        mEtValidateCode.addTextChangedListener(new TextChangeListener(mEtValidateCode));
+        mEtPassword.addTextChangedListener(new TextChangeListener(mEtPassword));
     }
 
     @Override
@@ -71,7 +91,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
         switch (view.getId()){
 
             case R.id.btn_register_validate_code:
-                phoneNumber = mEtPhoneNumber.getText().toString(); //获取输入的手机号
+               phoneNumber = mEtPhoneNumber.getText().toString(); //获取输入的手机号
                 if (phoneNumber.length() == 11 && phoneNumber.matches("^1[34578]\\d{9}$") && (btnClickedCount <=3 )) {
 
                     HttpUtil.sendPostRequestWithOkHttp("http://10.1.3.39:8080/login","phone", phoneNumber, new okhttp3.Callback() {
@@ -102,13 +122,25 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
                 }
                break;
 
+            case R.id.tv_protocol:
+                toProtocol();
+                break;
+
+            case R.id.tv_disclaimer:
+                toDisclaimer();
+                break;
+
             case R.id.btn_register_next:
-                String validateCodeInput = mEtValidateCode.getText().toString(); //获取输入的验证码
-                String password = mEtPassword.getText().toString(); //获取输入的密码
+                validateCodeInput = mEtValidateCode.getText().toString(); //获取输入的验证码
+                password= mEtPassword.getText().toString(); //获取输入的密码
+
+                if (phoneNumber.length() != 0 && validateCodeFromServer.length() != 0 && password.length() != 0){
+                    mBtnNext.isEnabled();
+                }
+
                 String regex = "[0-9A-Za-z]{6,20}";//6-20位数字或者字母
                 if(validateCodeInput.length() == 0 || (!validateCodeInput.equals(validateCodeFromServer))){
                     ShowToast.showToast("验证码不正确，请重新输入验证码！");
-                   Log.e("tag",validateCodeInput +":" + validateCodeFromServer);
                 }else if(!password.matches(regex)) {
                     ShowToast.showToast("密码只能由6-20位数字或英文组成！");
                 }else {
@@ -119,6 +151,37 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
         }
     }
 
+    private void toProtocol() {
+        ScrollView sc = new ScrollView(this);
+        sc.setBackgroundColor(getResources().getColor(R.color.white));
+        TextView tv = new TextView(this);
+        tv.setTextSize(16);
+        tv.setText(R.string.protocol);
+        sc.addView(tv);
+
+        new AlertDialog.Builder(this)
+                .setTitle("用户协议")
+                .setView(sc)
+                .create()
+                .show();
+    }
+
+    private void toDisclaimer() {
+        ScrollView sc = new ScrollView(this);
+        sc.setBackgroundColor(getResources().getColor(R.color.white));
+        TextView tv = new TextView(this);
+        tv.setTextSize(16);
+        tv.setText(R.string.disclaimer);
+        sc.addView(tv);
+
+       AlertDialog dialog =  new AlertDialog.Builder(this)
+                .setTitle("免责声明")
+                .setView(sc)
+                .create();
+
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        dialog.show();
+    }
 
     class TimeCount extends CountDownTimer {
 
@@ -137,5 +200,39 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
             mBtnSendValidateCode.setClickable(true);
             mBtnSendValidateCode.setText("获取验证码");
         }
+    }
+
+    class TextChangeListener implements TextWatcher{
+
+        private EditText editText;
+
+        public TextChangeListener(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+
+            phoneNumber =  mEtPhoneNumber.getText().toString(); //获取输入的手机号
+            validateCodeInput = mEtValidateCode.getText().toString();
+            password = mEtPassword.getText().toString();
+
+            if (phoneNumber.length()>0 && validateCodeInput.length()>0 && password.length()>0){
+                mBtnNext.setEnabled(true);
+            }else{
+                mBtnNext.setEnabled(false);
+            }
+        }
+
     }
 }

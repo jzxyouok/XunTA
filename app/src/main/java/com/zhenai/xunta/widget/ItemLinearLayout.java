@@ -34,6 +34,15 @@ public class ItemLinearLayout extends LinearLayout{
         ImageView icon = findViewById(R.id.imgView_icon); //item图标
         TextView text = findViewById(R.id.tv_text); //item图标对应的文字
 
+        /*icon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mListener!=null){
+                    mListener.onItemClick();
+                }
+            }
+        });*/
+
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ItemLinearLayout);
 
         if (typedArray != null){
@@ -44,5 +53,17 @@ public class ItemLinearLayout extends LinearLayout{
             text.setTextSize(14);
         }
 
+        typedArray.recycle();
+
+    }
+
+    public void addOnItemClickListener(OnItemLinearLayoutListener listener){
+        mListener=listener;
+    }
+
+    private OnItemLinearLayoutListener mListener;
+
+    public interface OnItemLinearLayoutListener{
+        void onItemClick();
     }
 }

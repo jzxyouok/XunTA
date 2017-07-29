@@ -93,7 +93,6 @@ public class ForgetPasswordActivity extends Activity implements View.OnClickList
                         }
                     });
 
-                    //validateCodeFromServer =  httpPostRequest(phoneNumber); //向服务器发Post请求，得到服务器返回的验证码
                     mTimeCount.start();
                     btnClickedCount++;
                     // Log.e("tag", "btnClickedCount:" +btnClickedCount + "");
