@@ -34,7 +34,7 @@
 
         <!--android:theme="@style/AppTheme.Full"-->
         <!-- android:theme="@style/AppSplash"-->
-        <activity android:name=".activity.RegisterActivity"
+        <activity android:name=".activity.MainActivity"
                   android:theme="@style/AppTheme.Full">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,16 +44,26 @@
         </activity>
 
         <activity android:name=".activity.SplashActivity"/>
-        <activity android:name=".activity.MainActivity"/>
+      <!--  <activity android:name=".activity.MainActivity"/>-->
         <activity android:name=".activity.LaunchActivity"/>
         <activity android:name=".activity.LoginActivity"/>
-       <!-- <activity android:name=".activity.RegisterActivity"/>-->
+        <activity android:name=".activity.RegisterActivity"/>
         <activity android:name=".activity.ForgetPasswordActivity"/>
         <activity android:name=".activity.PersonalDataActivity"/>
-        <activity android:name=".activity.SettingActivity"/>
-        <activity android:name=".activity.MyCertificationActivity"/>
 
+        <activity android:name=".activity.EditSelfDataActivity"/>
         <activity android:name=".activity.PhotoViewActivity"/>
+
+        <activity android:name=".activity.MyReleaseActivity"/>
+        <activity android:name=".activity.MyAppointmentActivity"/>
+        <activity android:name=".activity.MyFocusActivity"/>
+        <activity android:name=".activity.MemberCenterActivity"/>
+        <activity android:name=".activity.MyChatCouponActivity"/>
+        <activity android:name=".activity.CustomizedDisplayActivity"/>
+        <activity android:name=".activity.MyCertificationActivity"/>
+        <activity android:name=".activity.SettingActivity"/>
+        <activity android:name=".activity.FeedbackActivity"/>
+
 
     </application>
 
