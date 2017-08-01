@@ -1,10 +1,11 @@
 package com.zhenai.xunta.activity;
 
-import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +28,7 @@ import okhttp3.Response;
  * Created by wenjing.tang on 2017/7/26.
  */
 
-public class ForgetPasswordActivity extends Activity implements View.OnClickListener{
+public class ForgetPasswordActivity extends BaseActivity implements View.OnClickListener{
 
     private EditText mEtPhoneNumber, mEtValidateCode, mEtPassword;
     private Button mBtnSendValidateCode, mBtnNext;
@@ -35,8 +36,14 @@ public class ForgetPasswordActivity extends Activity implements View.OnClickList
     private int btnClickedCount = 0; //记录发送验证码Button点击的次数
     String phoneNumber;
     String validateCodeFromServer ; //服务器返回的验证码
+    String stateCode; ////服务器返回的状态码
 
     private TimeCount mTimeCount;//计时器
+
+    public static final String FORGET_PASSWORD_SUCCESS = "1701011";
+    public static final String FORGET_PASSWORD_FAILURE = "1701012";
+    public static  final String PHONE_IS_NOT_EXISIT = "1701013";
+    public static  final String FORGET_PASSWORD_URL = "http://10.1.3.39:8080/login";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,12 +57,12 @@ public class ForgetPasswordActivity extends Activity implements View.OnClickList
     }
 
     private void initViews() {
-        mEtPhoneNumber = findViewById(R.id.et_forgetpassword_telphone_number);
-        mEtValidateCode = findViewById(R.id.et_forgetpassword_validate_code);
-        mEtPassword = findViewById(R.id.et_forgetpassword_password);
+        mEtPhoneNumber = (EditText) findViewById(R.id.et_forgetpassword_telphone_number);
+        mEtValidateCode = (EditText) findViewById(R.id.et_forgetpassword_validate_code);
+        mEtPassword = (EditText) findViewById(R.id.et_forgetpassword_password);
 
-        mBtnSendValidateCode = findViewById(R.id.btn_forgetpassword__validate_code);
-        mBtnNext = findViewById(R.id.btn_forget_password_query);
+        mBtnSendValidateCode = (Button) findViewById(R.id.btn_forgetpassword__validate_code);
+        mBtnNext = (Button) findViewById(R.id.btn_forget_password_query);
 
         mTimeCount = new TimeCount(60000, 1000);
     }
@@ -74,7 +81,7 @@ public class ForgetPasswordActivity extends Activity implements View.OnClickList
                 phoneNumber = mEtPhoneNumber.getText().toString(); //获取输入的手机号
                 if (phoneNumber.length() == 11 && phoneNumber.matches("^1[34578]\\d{9}$") && (btnClickedCount <=3 )) {
 
-                    HttpUtil.sendPostRequestWithOkHttp("http://10.1.3.39:8080/login","phone", phoneNumber, new okhttp3.Callback() {
+                    HttpUtil.sendPostRequestWithOkHttp(FORGET_PASSWORD_URL,"phone", phoneNumber, new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             ShowToast.showToast("网络异常，请稍后再试~");
@@ -85,7 +92,22 @@ public class ForgetPasswordActivity extends Activity implements View.OnClickList
                            String responseData = response.body().string();
                             try {
                                 JSONObject jsonObject = new JSONObject(responseData);
-                                 validateCodeFromServer = jsonObject.getString("resultCode");
+                                // TODO: 2017/8/1  获取返回的 状态码 和 验证码
+                                stateCode = "";
+                                 validateCodeFromServer = jsonObject.getString("data"); //获取服务器返回的验证码
+
+                                if(stateCode.equals(PHONE_IS_NOT_EXISIT)){//账号不存在，去注册
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showDialog();
+                                        }
+                                    });
+                                }
+                                if(validateCodeFromServer.equals(FORGET_PASSWORD_SUCCESS)){ //
+
+                                }
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -120,6 +142,26 @@ public class ForgetPasswordActivity extends Activity implements View.OnClickList
         }
     }
 
+    public void showDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("您的账号不存在");
+        builder.setMessage("点击确定进行注册");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(ForgetPasswordActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.show();
+
+    }
 
     class TimeCount extends CountDownTimer {
 

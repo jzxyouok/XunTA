@@ -2,7 +2,6 @@ package com.zhenai.xunta.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,13 +31,11 @@ import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.bigkoo.pickerview.TimePickerView;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
 import com.zhenai.xunta.R;
 import com.zhenai.xunta.model.JsonBean;
 import com.zhenai.xunta.utils.GetJsonDataUtil;
+import com.zhenai.xunta.utils.SharedPreferencesUtil;
 import com.zhenai.xunta.utils.ShowToast;
 import com.zhenai.xunta.widget.CustomPopupWindow;
 
@@ -51,15 +47,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 个人资料
  * Created by wenjing.tang on 2017/7/27.
  */
 
-public class PersonalDataActivity extends Activity implements View.OnClickListener, CustomPopupWindow.OnItemClickListener {
+public class PersonalDataActivity extends BaseActivity implements View.OnClickListener, CustomPopupWindow.OnItemClickListener {
 
     private LinearLayout mLinearLayoutAvatar;
     private TextView mTvHint;
@@ -78,13 +79,15 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
     private ArrayList<ArrayList<String>> options2Items = new ArrayList<>();
     private ArrayList<ArrayList<ArrayList<String>>> options3Items = new ArrayList<>();
 
-    private String nickName, sex, districtName, birthdata ;
+    private String nickName, sex, districtName, birthDate ;
+    private String phoneNumber, password;
+    File outputImageFile = null;
+
+    public static  final String POST_PERSONAL_DATA_URL = "http://10.1.3.39:8080/login";
 
     boolean isImageUploaded = false;
     boolean isTimeSelected = false;
     boolean isDistrictSelected = false;
-
-    File outputImage = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,24 +97,27 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
         initViews();
         setListeners();
 
+        phoneNumber = getIntent().getStringExtra("phone");
+        password = getIntent().getStringExtra("password");
+
         initJsonData();
         mPop=new CustomPopupWindow(this);
         mPop.setOnItemClickListener(this);
     }
 
     public void initViews() {
-        mLinearLayoutAvatar = findViewById(R.id.ll_upload_avatar);
-        mTvHint = findViewById(R.id.tv_hint);
-        mEtNickname = findViewById(R.id.et_set_nickname);
-        mRadioBtnMale = findViewById(R.id.rb_male);
-        mRadioBtnFemale = findViewById(R.id.rb_female);
+        mLinearLayoutAvatar = (LinearLayout) findViewById(R.id.ll_upload_avatar);
+        mTvHint = (TextView) findViewById(R.id.tv_hint);
+        mEtNickname = (EditText) findViewById(R.id.et_set_nickname);
+        mRadioBtnMale = (RadioButton) findViewById(R.id.rb_male);
+        mRadioBtnFemale = (RadioButton) findViewById(R.id.rb_female);
 
-        mBtnDistrict = findViewById(R.id.btn_select_district);
+        mBtnDistrict = (Button) findViewById(R.id.btn_select_district);
         mBtnDistrict.getBackground().setAlpha(0);
 
-        mBtnBirthDate = findViewById(R.id.btn_select_birthdate);
+        mBtnBirthDate = (Button) findViewById(R.id.btn_select_birthdate);
         mBtnBirthDate.getBackground().setAlpha(0);
-        mBtnDone = findViewById(R.id.btn_done);
+        mBtnDone = (Button) findViewById(R.id.btn_done);
     }
 
     public void setListeners() {
@@ -146,9 +152,8 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                     @Override
                     public void onTimeSelect(Date date, View v) {//选中事件回调
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
-                        birthdata = sdf.format(date);
-                        mBtnBirthDate.setText(birthdata);
-                        Log.e("tag",birthdata);
+                        birthDate = sdf.format(date);
+                        mBtnBirthDate.setText(birthDate);
                         isTimeSelected = true;
                     }
                 })
@@ -165,7 +170,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
             case R.id.btn_done: //完成，提交数据到服务器并进入主界面
                 String regex = "[a-zA-Z0-9_\u4e00-\u9fa5]+";
                 String regexPureNumber = "^\\d+$";
-                nickName = mEtNickname.getText().toString();
+                nickName = mEtNickname.getText().toString().trim();
                 if(isImageUploaded == false) {
                     ShowToast.showToast("未上传头像哦~");
                 }else if (nickName.length() == 0){
@@ -185,33 +190,64 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                 }else if(isTimeSelected == false){
                     ShowToast.showToast("请选择出生日期");
                 }else{
-                    // TODO: 2017/7/27   向服务器发请求
-                    postPersonalData();
 
-                    //跳转到登录页
-                    Intent intent = new Intent(PersonalDataActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            postPersonalData();
+                        }
+                    }).start();
+
+                    startActivity(new Intent(PersonalDataActivity.this, LoginActivity.class));//注册成功，跳转到登录页
+
+                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"phone",phoneNumber);//保存手机号，便于下次直接登录
+
+                    finish();//销毁资料填写页
+
+                    //发广播销毁注册页面
+                    Intent sendBroadCastIntent  = new Intent("com.xunta.FINISH_REGISTER_ACTIVITY__BROADCAST");
+                    sendBroadcast(sendBroadCastIntent);
                 }
                 break;
         }
-
     }
 
     public void postPersonalData() {
 
-        Map<String, String> map = new HashMap<>();
-        nickName = mEtNickname.getText().toString();
-        Log.e("tag",nickName);
         if (mRadioBtnMale.isChecked()){
              sex = "男";
         }else {
-            sex = "女";
+             sex = "女";
         }
-        Log.e("tag",sex);
-        if (outputImage.exists()){
+/*        Log.e("tag",sex);
+        Log.e("tag",nickName);
+        Log.e("tag",phoneNumber);
+        Log.e("tag",password);
+        Log.e("tag",birthDate);
+        Log.e("tag",districtName);
+        Log.e("tag",outputImageFile.getName());*/
 
-        }else {
-            Log.e("tag","头像不存在");
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("nickname",nickName)
+                .addFormDataPart("sex",sex)
+                .addFormDataPart("birthDate",birthDate)
+                .addFormDataPart("districtName",districtName)
+                .addFormDataPart("avatar", "output_image.jpg", RequestBody.create(MediaType.parse("image/jpeg"), outputImageFile))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(POST_PERSONAL_DATA_URL)
+                .post(requestBody)
+                .build();
+        try {
+            Response response =  client.newCall(request).execute();
+            String responseData = response.body().string();
+            // TODO: 2017/8/1   向服务器POST数据
+            //Log.e("responseData",responseData);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -240,19 +276,19 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
 
     public void take_photo(){
         // 创建File对象，用于存储拍照后的图片
-        outputImage = new File(getExternalCacheDir(), "output_image.jpg");
+        outputImageFile = new File(getExternalCacheDir(), "output_image.jpg");
         try {
-            if (outputImage.exists()) {
-                outputImage.delete();
+            if (outputImageFile.exists()) {
+                outputImageFile.delete();
             }
-            outputImage.createNewFile();
+            outputImageFile.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (Build.VERSION.SDK_INT < 24) {
-            imageUri = Uri.fromFile(outputImage);
+            imageUri = Uri.fromFile(outputImageFile);
         } else {
-            imageUri = FileProvider.getUriForFile(PersonalDataActivity.this, "com.example.cameraalbumtest.fileprovider", outputImage);
+            imageUri = FileProvider.getUriForFile(PersonalDataActivity.this, "com.example.cameraalbumtest.fileprovider", outputImageFile);
         }
         // 启动相机程序
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
@@ -273,7 +309,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    Toast.makeText(this, "您取消了权限~~", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "您取消了权限~", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -288,21 +324,8 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                 if (resultCode == RESULT_OK) {
                     try {
                         // Glide将照片加载到LinearLayout背景，将拍摄的照片显示出来
-                        Glide.with(this)
-                                .load(imageUri)
-                                .asBitmap()
-                                .into(new SimpleTarget<Bitmap>(180, 180) {
-                                    @Override
-                                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                        Drawable drawable = new BitmapDrawable(resource);
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                            mLinearLayoutAvatar.setBackground(drawable);
-                                            isImageUploaded = true;
-                                        }
-                                    }
-                                });
-                       // Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                        //mLinearLayoutAvatar.setBackground(new BitmapDrawable(bitmap));
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                        mLinearLayoutAvatar.setBackground(new BitmapDrawable(bitmap));
                         mTvHint.setVisibility(View.INVISIBLE);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -313,11 +336,9 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                 if (resultCode == RESULT_OK) {
                     // 判断手机系统版本号
                     if (Build.VERSION.SDK_INT >= 19) {
-                        // 4.4及以上系统使用这个方法处理图片
-                        handleImageOnKitKat(data);
+                        handleImageOnKitKat(data);// 4.4及以上系统使用这个方法处理图片
                     } else {
-                        // 4.4以下系统使用这个方法处理图片
-                        handleImageBeforeKitKat(data);
+                        handleImageBeforeKitKat(data); // 4.4以下系统使用这个方法处理图片
                     }
                 }
                 break;
@@ -473,7 +494,7 @@ public class PersonalDataActivity extends Activity implements View.OnClickListen
                     districtName = province + city+ district;
                 }
                 mBtnDistrict.setText(districtName);
-                Log.e("tag",districtName);
+                //Log.e("tag",districtName);
                 isDistrictSelected = true;
             }
         })

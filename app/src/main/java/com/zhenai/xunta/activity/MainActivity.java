@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
  * Created by wenjing.tang on 2017/7/25.
  */
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener {
+public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener {
 
     private ArrayList<Fragment> fragments;
     Fragment mFindTaFragment, mRankFragment, mMessageFragment, mMeFragment;

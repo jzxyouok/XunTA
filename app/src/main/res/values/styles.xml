@@ -9,6 +9,25 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!--全屏显示-->
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.Full" parent="AppTheme.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <!--启动页-->
+    <style name="AppSplash" parent="android:Theme">
+        <item name="android:windowBackground">@drawable/pic1</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <!--<item name="windowNoTitle">true</item>-->
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <!--指定底部弹窗样式-->
     <style name="mypopwindow_anim_style">
         <item name="android:windowEnterAnimation">@anim/push_bottom_in</item>

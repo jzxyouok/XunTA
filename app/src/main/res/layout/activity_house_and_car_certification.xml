@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.zhenai.xunta.widget.CustomizedTitleBar
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:title_back_icon_visible="true"
+        app:title_back_icon="@drawable/arrow_left"
+        app:title_text="富豪星人认证">
+    </com.zhenai.xunta.widget.CustomizedTitleBar>
+
+    <TextView
+        android:id="@+id/tv_about_safety"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="关于隐私安全"
+        android:textStyle="bold"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="你上传的任何房产证或驾驶证等资料，仅供审核使用且TA人无法查看，敬请放心使用"/>
+
+    <TextView
+        android:id="@+id/tv_houuse_and_car_certification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="富豪星人认证"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_upload_house_license"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:clickable="true"
+                tools:background="@drawable/pic1"/>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="请上传房产证" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/iv_upload_car"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:clickable="true"
+                tools:background="@drawable/pic1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="请上传驾驶证"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="*证件上传其一即可"
+        android:textColor="@color/blue"/>
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:text="认证"/>
+
+</LinearLayout>

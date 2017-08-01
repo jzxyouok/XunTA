@@ -14,6 +14,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+<!--        <receiver android:name=".activity.LaunchActivity$FinishLaunchActivityBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.xunta.FINISH_LAUNCH_ACTIVITY__BROADCAST"/>
+            </intent-filter>
+        </receiver>-->
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.cameraalbumtest.fileprovider"
@@ -24,7 +32,10 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activity.RegisterActivity">
+        <!--android:theme="@style/AppTheme.Full"-->
+        <!-- android:theme="@style/AppSplash"-->
+        <activity android:name=".activity.RegisterActivity"
+                  android:theme="@style/AppTheme.Full">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,6 +43,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.SplashActivity"/>
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.LaunchActivity"/>
         <activity android:name=".activity.LoginActivity"/>
@@ -39,6 +51,9 @@
         <activity android:name=".activity.ForgetPasswordActivity"/>
         <activity android:name=".activity.PersonalDataActivity"/>
         <activity android:name=".activity.SettingActivity"/>
+        <activity android:name=".activity.MyCertificationActivity"/>
+
+        <activity android:name=".activity.PhotoViewActivity"/>
 
     </application>
 

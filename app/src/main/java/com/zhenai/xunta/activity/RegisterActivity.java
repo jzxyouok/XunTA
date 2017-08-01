@@ -1,11 +1,14 @@
 package com.zhenai.xunta.activity;
 
-import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
@@ -17,6 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.zhenai.xunta.R;
+import com.zhenai.xunta.utils.ActivityCollector;
 import com.zhenai.xunta.utils.HttpUtil;
 import com.zhenai.xunta.utils.ShowToast;
 
@@ -33,7 +37,7 @@ import okhttp3.Response;
  * Created by wenjing.tang on 2017/7/26.
  */
 
-public class RegisterActivity extends Activity implements View.OnClickListener{
+public class RegisterActivity extends BaseActivity implements View.OnClickListener{
 
     private EditText mEtPhoneNumber, mEtValidateCode, mEtPassword;
     private Button mBtnSendValidateCode, mBtnNext;
@@ -47,6 +51,12 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
 
     private TimeCount mTimeCount;//计时器
 
+    public static final String REGISTER_SUCCESS = "1701001";
+    public static final String REGISTER_FAILURE = "1701002";
+    public static  final String PHONE_IS_BINDED = "1701003";
+    public static  final String REGISTER_URL = "http://10.1.3.39:8080/login";
+    private FinishRegisterActivityBroadcastReceiver receiver;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,19 +66,40 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
         initViews();
 
         setListeners();
+
+        receiver = new FinishRegisterActivityBroadcastReceiver();
+        registerReceiver(receiver,new IntentFilter("com.xunta.FINISH_REGISTER_ACTIVITY__BROADCAST"));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+    //动态广播
+    public class FinishRegisterActivityBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals("com.xunta.FINISH_REGISTER_ACTIVITY__BROADCAST")){
+                ActivityCollector.finishActivity(RegisterActivity.this); //finish();
+            }
+
+        }
     }
 
     private void initViews() {
-        mEtPhoneNumber = findViewById(R.id.et_register_telphone_number);
-        mEtValidateCode = findViewById(R.id.et_register_validate_code);
+        mEtPhoneNumber = (EditText) findViewById(R.id.et_register_telphone_number);
+        mEtValidateCode = (EditText) findViewById(R.id.et_register_validate_code);
 
-        mEtPassword = findViewById(R.id.et_register_password);
+        mEtPassword = (EditText) findViewById(R.id.et_register_password);
         mEtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());//显示密文
 
-        mBtnSendValidateCode = findViewById(R.id.btn_register_validate_code);
-        mBtnNext = findViewById(R.id.btn_register_next);
-        mTvProtocol = findViewById(R.id.tv_protocol);
-        mTvDisclaimer = findViewById(R.id.tv_disclaimer);
+        mBtnSendValidateCode = (Button) findViewById(R.id.btn_register_validate_code);
+        mBtnNext = (Button) findViewById(R.id.btn_register_next);
+        mTvProtocol = (TextView) findViewById(R.id.tv_protocol);
+        mTvDisclaimer = (TextView) findViewById(R.id.tv_disclaimer);
 
         mTimeCount = new TimeCount(60000, 1000);
     }
@@ -94,7 +125,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
                phoneNumber = mEtPhoneNumber.getText().toString(); //获取输入的手机号
                 if (phoneNumber.length() == 11 && phoneNumber.matches("^1[34578]\\d{9}$") && (btnClickedCount <=3 )) {
 
-                    HttpUtil.sendPostRequestWithOkHttp("http://10.1.3.39:8080/login","phone", phoneNumber, new okhttp3.Callback() {
+                    HttpUtil.sendPostRequestWithOkHttp(REGISTER_URL, "phone", phoneNumber, new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             ShowToast.showToast("网络异常");
@@ -105,7 +136,19 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
                             String responseData = response.body().string();
                             try {
                                 JSONObject jsonObject = new JSONObject(responseData);
-                                validateCodeFromServer = jsonObject.getString("resultCode"); //服务器返回码
+
+                                //validateCodeFromServer = jsonObject.getString("resultCode");
+                                validateCodeFromServer = "1234"; //模拟
+                               // Log.e("validateCodeFromServer",validateCodeFromServer);
+                                if(validateCodeFromServer.equals(PHONE_IS_BINDED)){ //
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showDialog();
+                                        }
+                                    });
+                                }
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -138,6 +181,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
                     mBtnNext.isEnabled();
                 }
 
+                //String regexNumber = "[0-9]+";//6-20位纯数字
                 String regex = "[0-9A-Za-z]{6,20}";//6-20位数字或者字母
                 if(validateCodeInput.length() == 0 || (!validateCodeInput.equals(validateCodeFromServer))){
                     ShowToast.showToast("验证码不正确，请重新输入验证码！");
@@ -145,10 +189,35 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
                     ShowToast.showToast("密码只能由6-20位数字或英文组成！");
                 }else {
                     Intent intent = new Intent(RegisterActivity.this, PersonalDataActivity.class);
+                    intent.putExtra("phone",phoneNumber);
+                    intent.putExtra("password",password);
                     startActivity(intent);
                 }
                 break;
         }
+    }
+
+    /**
+     * 兼容的 AlertDialog
+     */
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("您已绑定手机号");
+        builder.setMessage("点击确定进行登录");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.show();
     }
 
     private void toProtocol() {
@@ -202,6 +271,9 @@ public class RegisterActivity extends Activity implements View.OnClickListener{
         }
     }
 
+    /*
+    监听EditText，当EditText全部不为空时Button才可以点击，否则不能点击
+     */
     class TextChangeListener implements TextWatcher{
 
         private EditText editText;
