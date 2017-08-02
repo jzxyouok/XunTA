@@ -3,7 +3,10 @@
     package="com.zhenai.xunta">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
 
     <application
         android:name="com.zhenai.xunta.utils.MyApplication"
@@ -33,9 +36,10 @@
         </provider>
 
         <!--android:theme="@style/AppTheme.Full"-->
+        <!-- android:theme="@style/AppTheme"--> <!--原来的AppTheme-->
         <!-- android:theme="@style/AppSplash"-->
         <activity android:name=".activity.MainActivity"
-                  android:theme="@style/AppTheme.Full">
+                  android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -52,7 +56,6 @@
         <activity android:name=".activity.PersonalDataActivity"/>
 
         <activity android:name=".activity.EditSelfDataActivity"/>
-        <activity android:name=".activity.PhotoViewActivity"/>
 
         <activity android:name=".activity.MyReleaseActivity"/>
         <activity android:name=".activity.MyAppointmentActivity"/>
@@ -63,6 +66,9 @@
         <activity android:name=".activity.MyCertificationActivity"/>
         <activity android:name=".activity.SettingActivity"/>
         <activity android:name=".activity.FeedbackActivity"/>
+        <activity android:name="com.lzy.imagepicker.ui.ImagePreviewDelActivity"/>
+        <activity android:name=".activity.PayActivity"/>
+        <activity android:name=".activity.EditSelfIntroductionActivity"/>
 
 
     </application>

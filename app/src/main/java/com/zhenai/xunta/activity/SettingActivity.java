@@ -1,8 +1,10 @@
 package com.zhenai.xunta.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 
@@ -14,6 +16,7 @@ import com.zhenai.xunta.utils.ShowToast;
 import com.zhenai.xunta.widget.ItemSettingLayout;
 
 /**
+ * 设置页
  * Created by wenjing.tang on 2017/7/29.
  */
 
@@ -30,6 +33,17 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         initViews();
 
         setListeners();
+
+       // initDatas();
+    }
+
+    private void initViews() {
+        mBtnLogout = (Button) findViewById(R.id.btn_logout);
+        mChangePassword = (ItemSettingLayout) findViewById(R.id.change_password);
+        mFeedback =  (ItemSettingLayout) findViewById(R.id.feedback);
+        mReport =  (ItemSettingLayout) findViewById(R.id.report);
+        mAboutUs =  (ItemSettingLayout) findViewById(R.id.about_us);
+        mWipeCache =  (ItemSettingLayout) findViewById(R.id.wipe_cache);
     }
 
     private void setListeners() {
@@ -41,14 +55,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         mWipeCache.setOnClickListener(this);
     }
 
-    private void initViews() {
-       // View rootView = LayoutInflater.from(this).inflate(R.layout.activity_setting, null);
-        mBtnLogout = (Button) findViewById(R.id.btn_logout);
-        mChangePassword = (ItemSettingLayout) findViewById(R.id.change_password);
-        mFeedback =  (ItemSettingLayout) findViewById(R.id.feedback);
-        mReport =  (ItemSettingLayout) findViewById(R.id.report);
-        mAboutUs =  (ItemSettingLayout) findViewById(R.id.about_us);
-        mWipeCache =  (ItemSettingLayout) findViewById(R.id.wipe_cache);
+    private void initDatas() {
     }
 
     @Override
@@ -70,9 +77,30 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
             case R.id.wipe_cache:
                 try {
-                    String cacheSize =CleanMessageUtil.getTotalCacheSize(this);
-                    CleanMessageUtil.clearAllCache(this);
-                    ShowToast.showToast("清除缓存"+ cacheSize);
+                    String cacheSize = CleanMessageUtil.getTotalCacheSize(this);
+
+                    if (cacheSize.equals("0KB")){
+                        ShowToast.showToast("本地没有缓存哦~");
+                    }else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setTitle("清除缓存");
+                        builder.setMessage("确定要清除 "+ cacheSize + " 缓存吗？");
+                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                CleanMessageUtil.clearAllCache(SettingActivity.this);
+                                ShowToast.showToast("清除成功");
+                            }
+                        });
+                        builder.show();
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -93,4 +121,5 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
         }
     }
+
 }

@@ -44,9 +44,8 @@
                     android:id="@+id/tv_user_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:layout_marginStart="20dp"
-                    android:text="123456"
+                    android:text="12345678"
                     tools:text="12345678"/>
 
                 <!--<com.hymane.expandtextview.ExpandTextView
@@ -58,24 +57,29 @@
                     app:textContentColor="?android:attr/textColorPrimary"
                     app:textHintColor="?android:attr/textColorPrimary"
                     app:textTitleColor="?android:attr/textColorSecondary"/>-->
+                <LinearLayout
+                    android:layout_width="150dp"
+                    android:layout_height="60dp">
+                    <jaydenxiao.com.expandabletextview.ExpandableTextView
+                        android:id="@+id/etv_self_introduction"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/tv_user_id"
+                        android:layout_toRightOf="@+id/iv_avatar"
+                        android:layout_marginStart="20dp"
+                        app:animDuration="200"
+                        app:collapseDrawable="@drawable/icon_green_arrow_down"
+                        app:collapseExpandGrarity="right"
+                        app:collapseExpandTextColor="@color/main_color"
+                        app:contentTextColor="@color/gray"
+                        app:contentTextSize="14sp"
+                        app:expandDrawable="@drawable/icon_green_arrow_up"
+                        app:maxCollapsedLines="2"/>
 
-                <jaydenxiao.com.expandabletextview.ExpandableTextView
-                    android:id="@+id/etv_self_introduction"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_user_id"
-                    android:layout_toRightOf="@+id/iv_avatar"
-                    android:layout_marginStart="20dp"
-                    app:animDuration="200"
-                    app:collapseDrawable="@drawable/icon_green_arrow_down"
-                    app:collapseExpandGrarity="right"
-                    app:collapseExpandTextColor="@color/main_color"
-                    app:contentTextColor="@color/gray"
-                    app:contentTextSize="14sp"
-                    app:expandDrawable="@drawable/icon_green_arrow_up"
-                    app:maxCollapsedLines="2"
-                    app:textCollapse="@string/collapse"
-                    app:textExpand="@string/expand" />
+                </LinearLayout>
+
+
+
 
             </LinearLayout>
 
@@ -98,9 +102,10 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/picture_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="80dp"
             android:layout_centerInParent="true"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            tools:listitem="@layout/list_item_image">
         </android.support.v7.widget.RecyclerView>
 
         <View
@@ -134,6 +139,13 @@
                 android:layout_height="wrap_content"
                 app:icon_drawable="@drawable/release"
                 app:icon_text="我的关注"/>
+
+            <com.zhenai.xunta.widget.ItemLinearLayout
+                android:id="@+id/my_blaklist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:icon_drawable="@drawable/release"
+                app:icon_text="我的黑名单"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/member_center"

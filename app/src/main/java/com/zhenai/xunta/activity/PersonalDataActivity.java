@@ -167,7 +167,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 pvTime.show();
                 break;
 
-            case R.id.btn_done: //完成，提交数据到服务器并进入主界面
+            case R.id.btn_done: //完成，提交数据到服务器、写入数据到本地，并进入主界面
                 String regex = "[a-zA-Z0-9_\u4e00-\u9fa5]+";
                 String regexPureNumber = "^\\d+$";
                 nickName = mEtNickname.getText().toString().trim();
@@ -201,8 +201,12 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                     startActivity(new Intent(PersonalDataActivity.this, LoginActivity.class));//注册成功，跳转到登录页
 
                     SharedPreferencesUtil.setParam(PersonalDataActivity.this,"phone",phoneNumber);//保存手机号，便于下次直接登录
+                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"nickName",nickName);
+                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"sex",sex);
+                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"birthDate",birthDate);
+                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"districtName",districtName);
 
-                    finish();//销毁资料填写页
+                    finish();//销毁资料填写页面
 
                     //发广播销毁注册页面
                     Intent sendBroadCastIntent  = new Intent("com.xunta.FINISH_REGISTER_ACTIVITY__BROADCAST");
@@ -230,11 +234,11 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("nickname",nickName)
+                .addFormDataPart("nickName",nickName)
                 .addFormDataPart("sex",sex)
                 .addFormDataPart("birthDate",birthDate)
                 .addFormDataPart("districtName",districtName)
-                .addFormDataPart("avatar", "output_image.jpg", RequestBody.create(MediaType.parse("image/jpeg"), outputImageFile))
+                .addFormDataPart("avatar", "atatar.jpg", RequestBody.create(MediaType.parse("image/jpeg"), outputImageFile))
                 .build();
 
         Request request = new Request.Builder()
@@ -502,7 +506,6 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 .setDividerColor(Color.BLACK)
                 .setTextColorCenter(Color.BLACK) //设置选中项文字颜色
                 .setContentTextSize(20)
-                .setOutSideCancelable(false)// default is true
                 .build();
 
         pvOptions.setPicker(options1Items, options2Items,options3Items);//三级选择器

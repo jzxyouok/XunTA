@@ -13,7 +13,7 @@ import java.util.List;
 import uk.co.senab.photoview.PhotoView;
 
 /**
- * 查看图片大图的ViewPager适配器
+ * 查看图片大图的ViewPager适配器 ；已经废弃
  * Created by wenjing.tang on 2017/7/31.
  */
 
