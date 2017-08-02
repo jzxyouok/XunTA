@@ -260,6 +260,7 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // TODO: 2017/8/2 保存接收的个人资料 
     }
 
     public void showMarriageStatusPickerView() {
