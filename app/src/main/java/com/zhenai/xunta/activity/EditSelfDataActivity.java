@@ -1,9 +1,12 @@
 package com.zhenai.xunta.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -11,8 +14,11 @@ import android.widget.TextView;
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.zhenai.xunta.R;
 import com.zhenai.xunta.utils.SharedPreferencesUtil;
+import com.zhenai.xunta.utils.ShowToast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.zhenai.xunta.R.id.imgBtn_self_introduction;
 
@@ -27,10 +33,11 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
     private TextView mTvSaveData;
 
     private TextView mTvNickName, mTvSex, mTvBirthDate, mTvDistrictName;
-    private String nickName,  sex, birthDate, districtName, selfIntroduction;
+    private String nickName,  sex, birthDate, districtName; //个人基本信息
 
-
+    private TextView mTvSelfIntroductionStatus; //自我介绍
     private ImageButton mImgBtnSelfIntroduction;
+    private String selfIntroduction;
     private static final  int  SELF_INRTODUCTION_REQUEST_CODE = 1;
 
     private ArrayList<String> marriageStatusList = new ArrayList<>(); //感情状况
@@ -38,7 +45,7 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
     private ImageButton mImgBtnMarriageStatus;
     private TextView mTvMarriageStatus;
 
-    private ArrayList<String> professions1Items = new ArrayList<>();//职业
+    private ArrayList<String> professions1Items = new ArrayList<>();   //职业
     private ArrayList<ArrayList<String>> professions2Items = new ArrayList<>();
     String profession;
     private ImageButton mImgBtnProfession;
@@ -54,7 +61,10 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
     private ImageButton mImgBtnIsDrinking;
     private TextView mTvIsDrinking;
 
-
+    private ArrayList<String> hobbyList = new ArrayList<>();//兴趣爱好
+    String hobby;
+    private ImageButton mImgBtnHobby;
+    private TextView mTvHobby;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,18 +80,23 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
     }
 
     private void initViews() {
+
+        mImgBtnBack = (ImageButton) findViewById(R.id.imgBtn_back);
+        mTvSaveData = (TextView) findViewById(R.id.tv_save_my_data);
+
         mTvNickName = (TextView) findViewById(R.id.tv_edit_nickname);
         mTvSex = (TextView) findViewById(R.id.tv_edit_nickname);
         mTvBirthDate = (TextView) findViewById(R.id.tv_edit_birthDate);
         mTvDistrictName= (TextView) findViewById(R.id.tv_edit_district);
 
-        mImgBtnBack = (ImageButton) findViewById(R.id.imgBtn_back);
-        mTvSaveData = (TextView) findViewById(R.id.tv_save_my_data);
-
+        mTvSelfIntroductionStatus = (TextView) findViewById(R.id.tv_self_introduction_status);
         mImgBtnSelfIntroduction = (ImageButton) findViewById(imgBtn_self_introduction);
 
         mImgBtnMarriageStatus = (ImageButton) findViewById(R.id.imgBtn_relationship_status);
         mTvMarriageStatus = (TextView) findViewById(R.id.tv_relationship_status);
+
+        mImgBtnProfession = (ImageButton) findViewById(R.id.imgBtn_profession_status);
+        mTvIsProfession = (TextView) findViewById(R.id.tv_profession_status);
 
         mImgBtnIsSmoking = (ImageButton) findViewById(R.id.imgBtn_is_smoking);
         mTvIsSmoking = (TextView) findViewById(R.id.tv_is_smoking_status);
@@ -89,37 +104,53 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
         mImgBtnIsDrinking = (ImageButton) findViewById(R.id.imgBtn_is_drinking);
         mTvIsDrinking = (TextView) findViewById(R.id.tv_is_drinking_status);
 
-        mImgBtnProfession = (ImageButton) findViewById(R.id.imgBtn_profession_status);
-        mTvIsProfession = (TextView) findViewById(R.id.tv_profession_status);
+        mImgBtnHobby = (ImageButton) findViewById(R.id.imgBtn_hobby);
+        mTvHobby= (TextView) findViewById(R.id.tv_hobby_status);
     }
 
     private void initDatas() {
+        //取4项 个人信息
         nickName = (String) SharedPreferencesUtil.getParam(this,"nickName","");
         sex = (String) SharedPreferencesUtil.getParam(this,"phone","");
         birthDate = (String) SharedPreferencesUtil.getParam(this,"birthDate","");
         districtName =  (String) SharedPreferencesUtil.getParam(this,"districtName","");
 
-        if (nickName.equals("") || sex.equals("") || birthDate.equals("") || districtName.equals("")){
-            // TODO: 2017/8/2  本地没有缓存数据，向服务器请求数据
+        selfIntroduction = (String) SharedPreferencesUtil.getParam(this,"selfIntroduction","");
+        marriageStatus = (String) SharedPreferencesUtil.getParam(this,"marriageStatus","");
+        profession = (String) SharedPreferencesUtil.getParam(this,"profession","");
+        isSmoking = (String) SharedPreferencesUtil.getParam(this,"isSmoking","");
+        isDrinking = (String) SharedPreferencesUtil.getParam(this,"isDrinking","");
+        hobby = (String) SharedPreferencesUtil.getParam(this,"hobby","");
+        if ( (nickName.equals("") || null == nickName) && (selfIntroduction.equals("") || null == selfIntroduction) ){
+
+            // TODO: 2017/8/3  本地没有缓存 个人信息 + 交友信息 数据，就从服务器请求 个人信息 + 交友信息 的数据 并设置到TextView中
+
         }else {
             mTvNickName.setText(nickName);
             mTvSex.setText(sex);
             mTvBirthDate.setText(birthDate);
             mTvDistrictName.setText(districtName);
-        }
-        selfIntroduction = (String) SharedPreferencesUtil.getParam(this,"selfIntroduction","");
 
+            mTvSelfIntroductionStatus.setText(selfIntroduction);
+            mTvMarriageStatus.setText(marriageStatus);
+            mTvIsProfession.setText(profession);
+            mTvIsSmoking.setText(isSmoking);
+            mTvIsDrinking.setText(isDrinking);
+            mTvHobby.setText(hobby);
+        }
+
+        //感情状况
         marriageStatusList.add("单身");
         marriageStatusList.add("恋爱");
         marriageStatusList.add("已婚");
         marriageStatusList.add("离异");
         marriageStatusList.add("保密");
-
+        //是否抽烟
         isSmokingList.add("不抽烟");
         isSmokingList.add("稍微抽一点烟");
         isSmokingList.add("烟抽得很多");
         isSmokingList.add("只在社交场合会抽烟");
-
+        //是否喝酒
         isDrinkingList.add("不喝酒");
         isDrinkingList.add("稍微喝一点酒");
         isDrinkingList.add("酒喝得很多");
@@ -204,8 +235,22 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
         professions2Items.add(options2Items_05);
         professions2Items.add(options2Items_06);
         professions2Items.add(options2Items_07);
-
         /*--------职业数据源添加完毕---------*/
+
+        hobbyList.add("美食烹饪");
+        hobbyList.add("摄影");
+        hobbyList.add("电影");
+        hobbyList.add("阅读");
+        hobbyList.add("旅游");
+        hobbyList.add("健身");
+        hobbyList.add("游泳");
+        hobbyList.add("网球");
+        hobbyList.add("羽毛球");
+        hobbyList.add("跑步");
+        hobbyList.add("高尔夫");
+        hobbyList.add("马术");
+        hobbyList.add("极限运动");
+        hobbyList.add("钓鱼");
     }
 
     private void setListeners() {
@@ -217,23 +262,26 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
         mImgBtnIsSmoking.setOnClickListener(this);
         mImgBtnIsDrinking.setOnClickListener(this);
         mImgBtnProfession.setOnClickListener(this);
+        mImgBtnHobby.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.imgBtn_back:
-                finish();
+            case R.id.imgBtn_back: //返回键
+                showDialog();
                 break;
 
             case R.id.tv_save_my_data:
+                saveData();
+                ShowToast.showToast("保存成功");
                 finish();
                 break;
 
             case R.id.imgBtn_self_introduction:
-                //finish();
                 Intent intent = new Intent(EditSelfDataActivity.this, EditSelfIntroductionActivity.class);
+                intent.putExtra("selfIntroduction",selfIntroduction);
                 startActivityForResult(intent, SELF_INRTODUCTION_REQUEST_CODE);
                 break;
 
@@ -252,6 +300,10 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
             case R.id.imgBtn_is_drinking:
                 showIsDrinkingPickerView();
                 break;
+
+            case R.id.imgBtn_hobby:
+                showHobbyPickerView();
+                break;
         }
 
     }
@@ -260,9 +312,87 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // TODO: 2017/8/2 保存接收的个人资料 
+        // TODO: 2017/8/2 保存接收的个人资料
+        switch (requestCode){
+            case SELF_INRTODUCTION_REQUEST_CODE:
+                if (RESULT_OK == resultCode ){
+                    selfIntroduction = data.getStringExtra("selfIntroduction"); //返回的个人介绍
+                    mTvSelfIntroductionStatus.setText(selfIntroduction);
+                    Log.i("selfIntroduction",selfIntroduction);
+
+                }
+
+                break;
+        }
     }
 
+    //保存数据到本地，并同时上传到服务器
+    public void saveData(){
+        Map<String,String> datingIngormationMap = new HashMap<>(); //个人信息map
+        if (!mTvSelfIntroductionStatus.getText().equals("未输入")){
+            SharedPreferencesUtil.setParam(this,"selfIntroduction",selfIntroduction);
+            datingIngormationMap.put("selfIntroduction",selfIntroduction);
+        }else {
+            SharedPreferencesUtil.setParam(this,"selfIntroduction","未输入");
+            datingIngormationMap.put("selfIntroduction","未输入");
+        }
+        if (!mTvMarriageStatus.getText().equals("未设置")){
+            SharedPreferencesUtil.setParam(this,"marriageStatus",marriageStatus);
+            datingIngormationMap.put("marriageStatus",marriageStatus);
+        }else {
+            SharedPreferencesUtil.setParam(this,"marriageStatus","未设置");
+            datingIngormationMap.put("marriageStatus","未设置");
+        }
+        if (!mTvIsProfession.getText().equals("未设置")){
+            SharedPreferencesUtil.setParam(this,"profession",profession);
+            datingIngormationMap.put("profession",profession);
+        }else {
+            SharedPreferencesUtil.setParam(this,"profession","未设置");
+            datingIngormationMap.put("profession","未设置");
+        }
+        if (!mTvIsSmoking.getText().equals("未设置")){
+            SharedPreferencesUtil.setParam(this,"isSmoking",isSmoking);
+            datingIngormationMap.put("isSmoking",isSmoking);
+        }else {
+            SharedPreferencesUtil.setParam(this,"isSmoking","未设置");
+            datingIngormationMap.put("isSmoking","未设置");
+        }
+        if (!mTvIsDrinking.getText().equals("未设置")){
+            SharedPreferencesUtil.setParam(this,"isDrinking",isDrinking);
+            datingIngormationMap.put("isDrinking",isDrinking);
+        }else {
+            SharedPreferencesUtil.setParam(this,"isDrinking","未设置");
+            datingIngormationMap.put("isDrinking","未设置");
+        }
+        if (!mTvHobby.getText().equals("未设置")){
+            SharedPreferencesUtil.setParam(this,"hobby",hobby);
+            datingIngormationMap.put("hobby",hobby);
+        }else {
+            SharedPreferencesUtil.setParam(this,"hobby","未设置");
+            datingIngormationMap.put("hobby","未设置");
+        }
+        // TODO: 2017/8/3 将Map中的数据更新到服务器端
+
+    }
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("要保存个人资料吗?");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                finish();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                saveData();
+                finish();
+            }
+        });
+        builder.show();
+    }
     public void showMarriageStatusPickerView() {
 
         OptionsPickerView pvOptions = new OptionsPickerView.Builder(this, new OptionsPickerView.OnOptionsSelectListener() {
@@ -338,6 +468,26 @@ public class EditSelfDataActivity extends BaseActivity implements View.OnClickLi
                 .build();
 
         pvOptions.setPicker(isDrinkingList);
+        pvOptions.show();
+    }
+
+
+    public void showHobbyPickerView() {
+
+        OptionsPickerView pvOptions = new OptionsPickerView.Builder(this, new OptionsPickerView.OnOptionsSelectListener() {
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                hobby = hobbyList.get(options1);
+                mTvHobby.setText(hobby);
+            }
+        })
+                .setTitleText("兴趣爱好")
+                .setDividerColor(Color.BLACK)
+                .setTextColorCenter(Color.BLACK) //设置选中项文字颜色
+                .setContentTextSize(20)
+                .build();
+
+        pvOptions.setPicker(hobbyList);
         pvOptions.show();
     }
 }

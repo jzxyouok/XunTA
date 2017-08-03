@@ -14,172 +14,176 @@
 
 
         <!--个人资料-->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="horizontal">
+            android:layout_height="135dp"
+            android:background="@drawable/fragment_me_title_background">
+
+<!--            <FrameLayout
+                android:layout_width="67dp"
+                android:layout_height="67dp"
+                android:background="@drawable/avatar_background"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="18dp">
+
+            </FrameLayout>-->
+
             <ImageView
                 android:id="@+id/iv_avatar"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-               android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/pic1"
-                tools:background="@drawable/pic1"/>
-            <LinearLayout
-                android:layout_width="160dp"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/tv_nickname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/iv_avatar"
-                    android:layout_alignTop="@+id/iv_avatar"
-                    android:layout_marginStart="20dp"
-                    android:text="小明"
-                    tools:text="小明"/>
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:background="@drawable/round_cornor_bg"
+                tools:src="@drawable/pic1"
+                android:scaleType="fitXY"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="18dp"/>
 
-                <TextView
-                    android:id="@+id/tv_user_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="12345678"
-                    tools:text="12345678"/>
-
-                <!--<com.hymane.expandtextview.ExpandTextView
-                    android:id="@+id/etv_self_introduction"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    app:contentTextSize="14sp"
-                    app:textContentColor="?android:attr/textColorPrimary"
-                    app:textHintColor="?android:attr/textColorPrimary"
-                    app:textTitleColor="?android:attr/textColorSecondary"/>-->
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="60dp">
-                    <jaydenxiao.com.expandabletextview.ExpandableTextView
-                        android:id="@+id/etv_self_introduction"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_below="@+id/tv_user_id"
-                        android:layout_toRightOf="@+id/iv_avatar"
-                        android:layout_marginStart="20dp"
-                        app:animDuration="200"
-                        app:collapseDrawable="@drawable/icon_green_arrow_down"
-                        app:collapseExpandGrarity="right"
-                        app:collapseExpandTextColor="@color/main_color"
-                        app:contentTextColor="@color/gray"
-                        app:contentTextSize="14sp"
-                        app:expandDrawable="@drawable/icon_green_arrow_up"
-                        app:maxCollapsedLines="2"/>
-
-                </LinearLayout>
-
-
-
-
-            </LinearLayout>
-
-            <RelativeLayout
+            <TextView
+                android:id="@+id/tv_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="20dp">
-                <ImageButton
-                    android:id="@+id/btn_edit_self_introduction"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/edit"/>
-            </RelativeLayout>
+                android:layout_toRightOf="@+id/iv_avatar"
+                android:layout_alignTop="@+id/iv_avatar"
+                android:layout_marginStart="5dp"
+                android:text="小明"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                tools:text="小明"/>
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/tv_user_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_nickname"
+                android:layout_toRightOf="@+id/iv_avatar"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:text="ID:12345678"
+                tools:text="ID:112345678"/>
 
+            <TextView
+                android:id="@+id/tv_self_introduction"
+                android:layout_width="190dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_user_id"
+                android:layout_toRightOf="@+id/iv_avatar"
+                android:layout_marginStart="5dp"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:singleLine="true"
+                android:gravity="center_vertical"
+                android:ellipsize="end"
+                android:text="点击编辑按钮，介绍一下自己吧~"
+                />
 
+<!--          <jaydenxiao.com.expandabletextview.ExpandableTextView
+                android:id="@+id/etv_self_introduction"
+                android:layout_width="190dp"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/tv_user_id"
+                android:layout_toRightOf="@+id/iv_avatar"
+                android:layout_marginStart="5dp"
+                app:animDuration="200"
+                app:collapseDrawable="@drawable/icon_green_arrow_down"
+                app:collapseExpandGrarity="right"
+                app:collapseExpandTextColor="@color/main_color"
+                app:contentTextColor="#80FFFFFF"
+                app:contentTextSize="13sp"
+                app:expandDrawable="@drawable/icon_green_arrow_up"
+                app:maxCollapsedLines="2"/>-->
+
+            <ImageButton
+                android:id="@+id/btn_edit_self_introduction"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="18dp"
+                android:layout_marginTop="68dp"
+                android:background="@drawable/edit"/>
+
+        </RelativeLayout>
 
         <!--照片展示-->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/picture_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="110dp"
             android:layout_centerInParent="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
             tools:listitem="@layout/list_item_image">
         </android.support.v7.widget.RecyclerView>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorPrimary"/>
 
         <!--其他功能-->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp">
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/my_release"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/release"
+                app:icon_drawable="@drawable/fragment_me_my_release"
                 app:icon_text="我的发布"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/my_appointment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/release"
+                app:icon_drawable="@drawable/fragment_me_my_appointment"
                 app:icon_text="我的预约"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/my_focus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/release"
+                app:icon_drawable="@drawable/fragment_me_my_focus"
                 app:icon_text="我的关注"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/my_blaklist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/release"
+                app:icon_drawable="@drawable/fragment_me_my_black_list"
                 app:icon_text="我的黑名单"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/member_center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/member_center"
+                app:icon_drawable="@drawable/fragment_me_member_center"
                 app:icon_text="会员中心"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/my_chat_coupon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/member_center"
+                app:icon_drawable="@drawable/fragment_me_my_chat_coupon"
                 app:icon_text="我的聊天券"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/customized_display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/member_center"
+                app:icon_drawable="@drawable/fragment_me_customized_display"
                 app:icon_text="个性化展示"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/my_certification"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/member_center"
+                app:icon_drawable="@drawable/fragment_me_mycertification"
                 app:icon_text="我的认证"/>
 
             <com.zhenai.xunta.widget.ItemLinearLayout
                 android:id="@+id/setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:icon_drawable="@drawable/setting"
+                app:icon_drawable="@drawable/fragment_me_setting"
                 app:icon_text="设置"/>
 
         </LinearLayout>

@@ -34,10 +34,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
 
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.tab_findta_normal, "寻TA").setActiveColorResource(R.color.blue))
-                .addItem(new BottomNavigationItem(R.mipmap.tab_rank_normal, "排行榜").setActiveColorResource(R.color.blue))
-                .addItem(new BottomNavigationItem(R.mipmap.tab_message_normal, "消息").setActiveColorResource(R.color.blue))
-                .addItem(new BottomNavigationItem(R.mipmap.tab_me_normal, "我").setActiveColorResource(R.color.blue))
+        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.tab_findta_normal, "寻TA").setActiveColorResource(R.color.lightBlue))
+                .addItem(new BottomNavigationItem(R.mipmap.tab_rank_normal, "排行榜").setActiveColorResource(R.color.lightBlue))
+                .addItem(new BottomNavigationItem(R.mipmap.tab_message_normal, "消息").setActiveColorResource(R.color.lightBlue))
+                .addItem(new BottomNavigationItem(R.mipmap.tab_me_normal, "我的").setActiveColorResource(R.color.lightBlue))
                 .setFirstSelectedPosition(0)
                 .initialise();
 
@@ -105,25 +105,25 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         switch (position) {
             case 0:
                 if (fragments == null) {
-                    mFindTaFragment = FindTaFragment.newInstance("位置");
+                    mFindTaFragment = FindTaFragment.newInstance("寻TA");
                 }
                 transaction.replace(R.id.layout_frame, mFindTaFragment);
                 break;
             case 1:
                 if (mRankFragment == null) {
-                    mRankFragment = RankFragment.newInstance("发现");
+                    mRankFragment = RankFragment.newInstance("排行榜");
                 }
                 transaction.replace(R.id.layout_frame, mRankFragment);
                 break;
             case 2:
                 if (mMessageFragment == null) {
-                    mMessageFragment = MessageFragment.newInstance("爱好");
+                    mMessageFragment = MessageFragment.newInstance("消息");
                 }
                 transaction.replace(R.id.layout_frame, mMessageFragment);
                 break;
             case 3:
                 if (mMeFragment == null) {
-                    mMeFragment = MeFragment.newInstance("图书");
+                    mMeFragment = MeFragment.newInstance("我的");
                 }
                 transaction.replace(R.id.layout_frame, mMeFragment);
                 break;

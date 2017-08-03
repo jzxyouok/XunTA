@@ -17,13 +17,13 @@ public class HttpUtil {
 
     //Get请求
     public static void sendGetRequestWithOkHttp(String address, okhttp3.Callback callback){
-        //OkHttpClient client = new OkHttpClient();
-        //设置超时时间
+        OkHttpClient client = new OkHttpClient();
+/*        //设置超时时间
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
-                .build();
+                .build();*/
 
         Request request = new Request.Builder()
                 .url(address)

@@ -27,6 +27,8 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
     private TextView mTvSave, mTvWordsCount;
     private EditText mEtSelfIntroduction;
     private int length; //内心独白长度
+    private static final int REQUIRED_MINIMUM_LENGTH = 6;//要求的最短长度
+    private static final int REQUIRED_MAXIMUM_LENGTH = 20;//要求的最短长度
     private String selfIntroduction;
 
     @Override
@@ -35,6 +37,11 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
         setContentView(R.layout.activity_self_introduction);
 
         initViews();
+
+        selfIntroduction = getIntent().getStringExtra("selfIntroduction");
+        mEtSelfIntroduction.setText(selfIntroduction);
+        length = selfIntroduction.length();
+        mTvWordsCount.setText(length + "/" + REQUIRED_MAXIMUM_LENGTH);
 
         setListeners();
 
@@ -45,7 +52,6 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
         mTvSave = (TextView) findViewById(R.id.tv_save_self_introduction);
         mEtSelfIntroduction = (EditText) findViewById(R.id.et_self_introduction);
         mTvWordsCount = (TextView) findViewById(R.id.tv_words_count);
-
     }
 
     private void setListeners() {
@@ -62,17 +68,17 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
                 break;
 
             case R.id.tv_save_self_introduction:
-                if (length < 20){
-                    ShowToast.showToast("请至少输入20字~");
+                if (length < REQUIRED_MINIMUM_LENGTH){
+                    ShowToast.showToast("请至少输入" + REQUIRED_MINIMUM_LENGTH +"字~");
+                }else if (length > REQUIRED_MAXIMUM_LENGTH){
+                    ShowToast.showToast("输入过多哦~");
                 }else {
                     Intent intent = new Intent();
-                    intent.putExtra("selfIntroduction",selfIntroduction);
-                    Log.i("selfIntroduction",selfIntroduction);
+                    intent.putExtra("selfIntroduction",selfIntroduction); //返回selfIntroduction到上一个活动
                     setResult(RESULT_OK, intent);
                     finish();
                 }
                 break;
-
 
         }
     }
@@ -84,13 +90,16 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+                finish();
             }
         });
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if (length < 20){
-                    ShowToast.showToast("请至少输入20字~");
+                if (length < REQUIRED_MINIMUM_LENGTH){
+                    ShowToast.showToast("请至少输入" + REQUIRED_MINIMUM_LENGTH +"字~");
+                }else if (length > REQUIRED_MAXIMUM_LENGTH){
+                    ShowToast.showToast("输入过多哦~");
                 }else {
                     Intent intent = new Intent();
                     intent.putExtra("selfIntroduction",selfIntroduction);
@@ -105,26 +114,27 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
     }
 
     /*
-   监听EditText，当EditText全部不为空时Button才可以点击，否则不能点击
+      监听EditText，实时改变输入字数
     */
     class TextChangeListener implements TextWatcher {
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
-
             selfIntroduction = mEtSelfIntroduction.getText().toString();
             length = selfIntroduction.length();
-            mTvWordsCount.setText(length + "/1500");
+            mTvWordsCount.setText(length + "/" +REQUIRED_MAXIMUM_LENGTH);
+
+            if (length > REQUIRED_MAXIMUM_LENGTH){
+                ShowToast.showToast("输入过多哦~");
+            }
 
         }
     }

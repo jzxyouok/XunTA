@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="46dp">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -20,25 +20,25 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/imgView_icon"
-                android:layout_marginLeft="20dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="8dp"
                 android:layout_gravity="center_vertical"
-                tools:background="@drawable/setting"/>
+                tools:background="@drawable/fragment_me_setting"/>
             <TextView
                 android:id="@+id/tv_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="20dp"
-                android:textSize="18sp"
+                android:layout_marginStart="12dp"
+                android:textSize="14sp"
                 tools:text="我的发布"/>
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/imgBtn_click"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="7dp"
+            android:layout_height="13dp"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="30dp"
             android:background="@drawable/arrow"/>
@@ -47,9 +47,9 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="60dp"
-        android:layout_marginRight="30dp"
-        android:background="@color/colorPrimary"/>
+        android:layout_height="0.3dp"
+        android:layout_marginLeft="41dp"
+        android:layout_marginRight="13dp"
+        android:background="@color/LightLightGrey"/>
 
 </LinearLayout>

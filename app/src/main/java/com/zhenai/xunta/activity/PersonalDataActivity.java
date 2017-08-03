@@ -35,11 +35,14 @@ import com.google.gson.Gson;
 import com.zhenai.xunta.R;
 import com.zhenai.xunta.model.JsonBean;
 import com.zhenai.xunta.utils.GetJsonDataUtil;
+import com.zhenai.xunta.utils.ServerUrl;
 import com.zhenai.xunta.utils.SharedPreferencesUtil;
 import com.zhenai.xunta.utils.ShowToast;
 import com.zhenai.xunta.widget.CustomPopupWindow;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,11 +86,14 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     private String phoneNumber, password;
     File outputImageFile = null;
 
-    public static  final String POST_PERSONAL_DATA_URL = "http://10.1.3.39:8080/login";
-
     boolean isImageUploaded = false;
     boolean isTimeSelected = false;
     boolean isDistrictSelected = false;
+
+    String resultCode;//注册返回码
+    public static final String REGISTER_SUCCESS = "1701031";
+    public static final String REGISTER_FAILURE= "1701032";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -198,19 +204,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                         }
                     }).start();
 
-                    startActivity(new Intent(PersonalDataActivity.this, LoginActivity.class));//注册成功，跳转到登录页
 
-                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"phone",phoneNumber);//保存手机号，便于下次直接登录
-                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"nickName",nickName);
-                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"sex",sex);
-                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"birthDate",birthDate);
-                    SharedPreferencesUtil.setParam(PersonalDataActivity.this,"districtName",districtName);
-
-                    finish();//销毁资料填写页面
-
-                    //发广播销毁注册页面
-                    Intent sendBroadCastIntent  = new Intent("com.xunta.FINISH_REGISTER_ACTIVITY__BROADCAST");
-                    sendBroadcast(sendBroadCastIntent);
                 }
                 break;
         }
@@ -223,17 +217,12 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
         }else {
              sex = "女";
         }
-/*        Log.e("tag",sex);
-        Log.e("tag",nickName);
-        Log.e("tag",phoneNumber);
-        Log.e("tag",password);
-        Log.e("tag",birthDate);
-        Log.e("tag",districtName);
-        Log.e("tag",outputImageFile.getName());*/
 
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
+                .addFormDataPart("phone",phoneNumber)
+                .addFormDataPart("password",password)
                 .addFormDataPart("nickName",nickName)
                 .addFormDataPart("sex",sex)
                 .addFormDataPart("birthDate",birthDate)
@@ -242,15 +231,40 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 .build();
 
         Request request = new Request.Builder()
-                .url(POST_PERSONAL_DATA_URL)
+                .url(ServerUrl.REGISTER_URL)
                 .post(requestBody)
                 .build();
         try {
             Response response =  client.newCall(request).execute();
             String responseData = response.body().string();
-            // TODO: 2017/8/1   向服务器POST数据
-            //Log.e("responseData",responseData);
+
+            JSONObject jsonObject = new JSONObject(responseData);
+            resultCode = jsonObject.getString("resultCode");
+            if (resultCode.equals(REGISTER_SUCCESS)){ //注册成功
+
+                // TODO: 2017/8/1   向服务器POST数据
+                startActivity(new Intent(PersonalDataActivity.this, LoginActivity.class));//注册成功，跳转到登录页
+
+                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"phone",phoneNumber);//保存手机号，便于下次直接登录
+                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"nickName",nickName);
+                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"sex",sex);
+                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"birthDate",birthDate);
+                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"districtName",districtName);
+
+                finish();//销毁资料填写页面
+
+                //发广播销毁注册页面
+                Intent sendBroadCastIntent  = new Intent("com.xunta.FINISH_REGISTER_ACTIVITY__BROADCAST");
+                sendBroadcast(sendBroadCastIntent);
+                //Log.e("resultCode",responseData);
+
+            }else {//注册失败
+
+            }
+
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 

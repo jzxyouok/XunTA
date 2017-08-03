@@ -12,8 +12,8 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.zhenai.xunta.R;
 import com.zhenai.xunta.utils.ActivityCollector;
 import com.zhenai.xunta.utils.HttpUtil;
+import com.zhenai.xunta.utils.ServerUrl;
 import com.zhenai.xunta.utils.ShowToast;
 
 import org.json.JSONException;
@@ -43,18 +44,23 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private Button mBtnSendValidateCode, mBtnNext;
     private TextView mTvProtocol, mTvDisclaimer;
 
-    private int btnClickedCount = 0; //记录发送验证码Button点击的次数
-    String phoneNumber = "";
-    String validateCodeFromServer = "" ; //服务器返回的验证码
     String validateCodeInput = "";
+    String phoneNumber = "";
     String password = "";
 
+    private int btnClickedCount = 0; //记录发送验证码Button点击的次数
     private TimeCount mTimeCount;//计时器
 
-    public static final String REGISTER_SUCCESS = "1701001";
-    public static final String REGISTER_FAILURE = "1701002";
-    public static  final String PHONE_IS_BINDED = "1701003";
-    public static  final String REGISTER_URL = "http://10.1.3.39:8080/login";
+    public static final String SEND_MESSAGE_SUCCESS = "1701001";
+    public static final String SEND_MESSAGE_FAILURE= "1701002";
+    public static final String PHONE_EXISTED= "1701003";
+
+    public static final String CHECK_MESSAGE_SUCCESS = "1701004";
+    public static final String CHECK_MESSAGE_FAILURE = "1701005";
+
+    String sendMessageResultCode ;//发送消息返回码
+    String checkResultCode;//验证消息返回码
+
     private FinishRegisterActivityBroadcastReceiver receiver;
 
     @Override
@@ -121,14 +127,22 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
         switch (view.getId()){
 
-            case R.id.btn_register_validate_code:
-               phoneNumber = mEtPhoneNumber.getText().toString(); //获取输入的手机号
+            case R.id.btn_register_validate_code://发送验证码， get请求
+               phoneNumber = mEtPhoneNumber.getText().toString();
                 if (phoneNumber.length() == 11 && phoneNumber.matches("^1[34578]\\d{9}$") && (btnClickedCount <=3 )) {
 
-                    HttpUtil.sendPostRequestWithOkHttp(REGISTER_URL, "phone", phoneNumber, new okhttp3.Callback() {
+                    String url = ServerUrl.SEND_MESSAGE_URL + "?" + "phone=" + phoneNumber;
+
+                    HttpUtil.sendGetRequestWithOkHttp(url, new okhttp3.Callback(){
+
                         @Override
                         public void onFailure(Call call, IOException e) {
-                            ShowToast.showToast("网络异常");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ShowToast.showToast("网络异常");
+                                }
+                            });
                         }
 
                         @Override
@@ -136,15 +150,30 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                             String responseData = response.body().string();
                             try {
                                 JSONObject jsonObject = new JSONObject(responseData);
+                                sendMessageResultCode = jsonObject.getString("resultCode");
+                                Log.e("resultCode",sendMessageResultCode);
 
-                                //validateCodeFromServer = jsonObject.getString("resultCode");
-                                validateCodeFromServer = "1234"; //模拟
-                               // Log.e("validateCodeFromServer",validateCodeFromServer);
-                                if(validateCodeFromServer.equals(PHONE_IS_BINDED)){ //
+                                if (sendMessageResultCode.equals(SEND_MESSAGE_SUCCESS)){
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            showDialog();
+                                            ShowToast.showToast("发送成功");
+                                        }
+                                    });
+
+                                }else if(sendMessageResultCode.equals(SEND_MESSAGE_FAILURE)){
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ShowToast.showToast("发送失败");
+                                        }
+                                    });
+
+                                }else if(sendMessageResultCode.equals(PHONE_EXISTED)){ //
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showPhoneExistedDialog();
                                         }
                                     });
                                 }
@@ -153,7 +182,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                                 e.printStackTrace();
                             }
                         }
-                    });
+                    } );
 
                     mTimeCount.start();
                     btnClickedCount++;
@@ -177,32 +206,67 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 validateCodeInput = mEtValidateCode.getText().toString(); //获取输入的验证码
                 password= mEtPassword.getText().toString(); //获取输入的密码
 
-                if (phoneNumber.length() != 0 && validateCodeFromServer.length() != 0 && password.length() != 0){
+                if (phoneNumber.length() != 0 && validateCodeInput.length() != 0 && password.length() != 0){
                     mBtnNext.isEnabled();
                 }
 
-                //String regexNumber = "[0-9]+";//6-20位纯数字
                 String regex = "[0-9A-Za-z]{6,20}";//6-20位数字或者字母
-                if(validateCodeInput.length() == 0 || (!validateCodeInput.equals(validateCodeFromServer))){
-                    ShowToast.showToast("验证码不正确，请重新输入验证码！");
-                }else if(!password.matches(regex)) {
+                if(!password.matches(regex)) {
                     ShowToast.showToast("密码只能由6-20位数字或英文组成！");
                 }else {
-                    Intent intent = new Intent(RegisterActivity.this, PersonalDataActivity.class);
-                    intent.putExtra("phone",phoneNumber);
-                    intent.putExtra("password",password);
-                    startActivity(intent);
+                    String url = ServerUrl.CHECK_MESSAGE_URL + "?" + "phone=" + phoneNumber +"&" + "messageCode=" + validateCodeInput;
+                    HttpUtil.sendGetRequestWithOkHttp(url, new okhttp3.Callback(){
+
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ShowToast.showToast("网络异常");
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            String responseData = response.body().string();
+                            try {
+                                JSONObject jsonObject = new JSONObject(responseData);
+                                checkResultCode = jsonObject.getString("resultCode");
+                                Log.e("resultCode",checkResultCode);
+
+                               if (checkResultCode.equals(CHECK_MESSAGE_SUCCESS)){
+                                   Intent intent = new Intent(RegisterActivity.this, PersonalDataActivity.class);
+                                   intent.putExtra("phone",phoneNumber);
+                                   intent.putExtra("password",password);
+                                   startActivity(intent);
+
+                               }else {
+                                  runOnUiThread(new Runnable() {
+                                      @Override
+                                      public void run() {
+                                          ShowToast.showToast("验证码输入错误");
+                                      }
+                                  });
+
+                               }
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } );
+
                 }
+
                 break;
         }
     }
 
-    /**
-     * 兼容的 AlertDialog
-     */
-    private void showDialog() {
+    private void showPhoneExistedDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("您已绑定手机号");
+        builder.setTitle("您已注册手机号");
         builder.setMessage("点击确定进行登录");
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
@@ -219,6 +283,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         });
         builder.show();
     }
+
+
+
+
 
     private void toProtocol() {
         ScrollView sc = new ScrollView(this);
@@ -247,8 +315,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 .setTitle("免责声明")
                 .setView(sc)
                 .create();
-
-        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         dialog.show();
     }
 

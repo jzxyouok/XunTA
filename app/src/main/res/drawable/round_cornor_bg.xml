@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Button背景样式-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:useLevel="false" >
+    <solid android:color="@null"/>
+
+    <padding android:left="1dp"
+        android:right="1dp"
+        android:bottom="1dp"/>
+
+    <stroke android:width="2dp"
+        android:color="#969be4" />
+
+    <!--边框宽度-->
+    <size android:width="67dp"
+        android:height="67dp"/>
+
+    <corners android:bottomLeftRadius="4dp"
+             android:bottomRightRadius="4dp"
+             android:topLeftRadius="4dp"
+             android:topRightRadius="4dp" />
+</shape>

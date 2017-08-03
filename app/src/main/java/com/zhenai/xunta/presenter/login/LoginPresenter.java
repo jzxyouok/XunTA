@@ -9,7 +9,9 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.zhenai.xunta.activity.RegisterActivity;
+import com.zhenai.xunta.utils.ServerUrl;
 import com.zhenai.xunta.utils.SharedPreferencesUtil;
+import com.zhenai.xunta.utils.ShowToast;
 import com.zhenai.xunta.view.ILoginView;
 
 import org.json.JSONException;
@@ -31,12 +33,14 @@ public class LoginPresenter {
 
     ILoginView loginView;
     private static  final int SHOW_TOAST_ERROR = 1;
+    private static  final int SHOW_DIAGLOG = 2;
+    private static  final int SHOW_HAVE_LOGIN_TOAST = 3;
     private Context mContext;
 
     public static final String LOGIN_SUCCESS = "1701021";
     public static final String LOGIN_FAILURE = "1701022";
     public static  final String PHONE_IS_NOT_EXIST = "1701023";
-    public static  final String LOGIN_URL = "http://10.1.3.39:8080/login";
+    public static  final String HAVE_LOGIN = "1701024";
 
     public LoginPresenter(ILoginView loginView, Context mContext) {
         this.loginView = loginView;
@@ -48,7 +52,12 @@ public class LoginPresenter {
             switch (message.what){
                 case SHOW_TOAST_ERROR:
                     loginView.showLoginError();
-                   // ShowToast.showToast("账号或密码有误，请重试~");
+                    break;
+                case SHOW_DIAGLOG:
+                    showDialog();
+                    break;
+                case SHOW_HAVE_LOGIN_TOAST:
+                    ShowToast.showToast("您已登录");
                     break;
                 default:
                     break;
@@ -58,7 +67,6 @@ public class LoginPresenter {
 
    //登录逻辑
     public void doLogin( final String phoneNumber, final String password){
-       // loginView.toMainActivity();
 
         new Thread(new Runnable() {
             @Override
@@ -66,12 +74,12 @@ public class LoginPresenter {
 
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new FormBody.Builder()
-                        .add("phone",phoneNumber)
+                        .add("username",phoneNumber)
                         .add("password",password)
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(LOGIN_URL)
+                        .url(ServerUrl.LOGIN_URL)
                         .post(requestBody)
                         .build();
                 try {
@@ -84,19 +92,25 @@ public class LoginPresenter {
                         try {
                             JSONObject jsonObject = new JSONObject(responseData);//解析返回的Json
                             resultCode= jsonObject.getString("resultCode");
-                           // Log.e("tag",resultCode);
+                            Log.e("tag",resultCode);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         //对返回码进行判断
                         if (resultCode.equals(LOGIN_SUCCESS)){//登录成功，跳转到主页面，并在SharedPreferences中写入手机号
                             loginView.toMainActivity();
-                            SharedPreferencesUtil.setParam(mContext,"phone",phoneNumber);//登录成功，将手机号写入本地
-                        }else if(resultCode.equals(PHONE_IS_NOT_EXIST)){ //账号不存在
-                            showDialog();
-                        }else {
+                            SharedPreferencesUtil.setParam(mContext,"username",phoneNumber);//登录成功，将手机号写入本地
+                        }else if(resultCode.equals(PHONE_IS_NOT_EXIST)){ //账号不存在，提示注册
+                            Message message = new Message();
+                            message.what = SHOW_DIAGLOG;
+                            handler.sendMessage(message);
+                        }else if(resultCode.equals(LOGIN_FAILURE)){
                             Message message = new Message();
                             message.what = SHOW_TOAST_ERROR;
+                            handler.sendMessage(message);
+                        }else {
+                            Message message = new Message();
+                            message.what = SHOW_HAVE_LOGIN_TOAST;
                             handler.sendMessage(message);
                         }
                     }
@@ -118,6 +132,7 @@ public class LoginPresenter {
                 dialogInterface.dismiss();
             }
         });
+
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

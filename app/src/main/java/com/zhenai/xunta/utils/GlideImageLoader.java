@@ -6,8 +6,10 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.lzy.imagepicker.loader.ImageLoader;
 import com.zhenai.xunta.R;
+import com.zhenai.xunta.widget.GlideRoundTransform;
 
 import java.io.File;
 
@@ -22,6 +24,7 @@ public class GlideImageLoader implements ImageLoader {
 
         Glide.with(activity)                             //配置上下文
                 .load(Uri.fromFile(new File(path)))      //设置图片路径(fix #8,文件名包含%符号 无法识别和显示)
+                .transform(new CenterCrop(activity),new GlideRoundTransform(activity, 10))
                 .error(R.mipmap.default_image)           //设置错误图片
                 .placeholder(R.mipmap.default_image)     //设置占位图片
                 .diskCacheStrategy(DiskCacheStrategy.ALL)//缓存全尺寸

@@ -39,9 +39,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.github.chrisbanes.photoview:library:+'
 
-    compile 'com.jaydenxiao:ExpandableTextView:1.0.0'
-    compile 'com.hymane.expandtextview:library:1.0.2'//可删除
-
+    compile 'com.makeramen:roundedimageview:2.3.0'
     compile 'com.lzy.widget:imagepicker:0.5.4'
     compile 'com.zhy:okhttputils:2.6.2'
 

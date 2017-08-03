@@ -11,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -33,26 +35,28 @@ import com.zhenai.xunta.presenter.MeFragmentPresenter;
 import com.zhenai.xunta.utils.GlideImageLoader;
 import com.zhenai.xunta.utils.SharedPreferencesUtil;
 import com.zhenai.xunta.view.IMeFragmentView;
+import com.zhenai.xunta.widget.GlideRoundTransform;
 import com.zhenai.xunta.widget.ItemLinearLayout;
 import com.zhenai.xunta.widget.SelectDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jaydenxiao.com.expandabletextview.ExpandableTextView;
-
 /**
  * Created by wenjing.tang on 2017/7/24.
  */
 
-public class MeFragment extends Fragment implements IMeFragmentView, View.OnClickListener, ImagePickerAdapter.OnRecyclerViewItemClickListener{
+public class MeFragment extends Fragment implements IMeFragmentView, View.OnClickListener, ImagePickerAdapter.OnRecyclerViewItemClickListener {
 
     private ItemLinearLayout mMyReleaseItemLinearLayout, mMyAppointmentItemLinearLayout, mMyFocusItemLinearLayout, mMyBlackListItemLinearLayout, mMemberCenterItemLinearLayout,
             mMyChatCouponItemLinearLayout, mCustomizedDisplayItemLinearLayout, mMyCertificationItemLinearLayout, mSettingItemLinearLayout;
 
+    private ImageView mIvAtatar;
     private TextView mTvNickname, mTvUserID;
     private ImageButton edit;
-    private ExpandableTextView mExpandableTextViewInduction;
+    // private ExpandableTextView mExpandableTextViewInduction;
+    private TextView mTvSelfInduction;
+
 
     View rootView;
 
@@ -81,25 +85,25 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
 
         initDatas();
 
-        setListeners();
-
         initImagePicker();
+
+        setListeners();
 
         initWidget();
 
         return rootView;
     }
 
-
-
     public void initViews() {
 
-        mTvNickname  = rootView.findViewById(R.id.tv_nickname);
+        mIvAtatar = rootView.findViewById(R.id.iv_avatar);
+        mTvNickname = rootView.findViewById(R.id.tv_nickname);
         mTvUserID = rootView.findViewById(R.id.tv_user_id);
+        mTvSelfInduction = rootView.findViewById(R.id.tv_self_introduction);
 
         mMyReleaseItemLinearLayout = rootView.findViewById(R.id.my_release);
         mMyAppointmentItemLinearLayout = rootView.findViewById(R.id.my_appointment);
-        mMyFocusItemLinearLayout= rootView.findViewById(R.id.my_focus);
+        mMyFocusItemLinearLayout = rootView.findViewById(R.id.my_focus);
         mMyBlackListItemLinearLayout = rootView.findViewById(R.id.my_blaklist);
         mMemberCenterItemLinearLayout = rootView.findViewById(R.id.member_center);
         mMyChatCouponItemLinearLayout = rootView.findViewById(R.id.my_chat_coupon);
@@ -109,8 +113,6 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
 
         edit = rootView.findViewById(R.id.btn_edit_self_introduction);
 
-        mExpandableTextViewInduction = rootView.findViewById(R.id.etv_self_introduction);
-        mExpandableTextViewInduction.setText("这是我的内心独白1这是我的内心独白2这是我的内心独白3");
     }
 
     private void setListeners() {
@@ -128,24 +130,29 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
     }
 
     private void initDatas() {
-        phone = (String) SharedPreferencesUtil.getParam(getActivity(),"phone","");
-        nickName = (String) SharedPreferencesUtil.getParam(getActivity(),"nickName","");
-        userID =  (String) SharedPreferencesUtil.getParam(getActivity(),"userID","");
-        selfIntroduction = (String) SharedPreferencesUtil.getParam(getActivity(),"selfIntroduction","");
-        if ( (nickName.equals("")) || (userID.equals("")) || (selfIntroduction.equals("")) ){//本地没有数据，请求服务器
+        phone = (String) SharedPreferencesUtil.getParam(getActivity(), "phone", "");
+        nickName = (String) SharedPreferencesUtil.getParam(getActivity(), "nickName", "");
+        userID = (String) SharedPreferencesUtil.getParam(getActivity(), "userID", "");
+        selfIntroduction = (String) SharedPreferencesUtil.getParam(getActivity(), "selfIntroduction", "");
+        if ((nickName.equals("")) || (userID.equals("")) || (selfIntroduction.equals(""))) {//本地没有数据，请求服务器
             // TODO: 2017/8/2 向服务器请求数据
-        }else {
+        } else {
             mTvNickname.setText(nickName);
             mTvUserID.setText(userID);
-            mExpandableTextViewInduction.setText(selfIntroduction);
+            mTvSelfInduction.setText(selfIntroduction);
         }
 
-        // TODO: 2017/8/2 头像和照片
+        //设置头像
+        int resource = R.drawable.pic1;
+        Glide.with(this)
+                .load(resource)
+                .transform(new GlideRoundTransform(getActivity(), 10))
+                .into(mIvAtatar);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_edit_self_introduction:
                 toEditSelfIntroductionActivity();
                 break;
@@ -162,7 +169,7 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
                 toMyFocusActivity();
                 break;
             case R.id.my_blaklist:
-               // toMyFocusActivity();
+                // toMyFocusActivity();
                 break;
 
             case R.id.member_center:
@@ -184,7 +191,6 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
             case R.id.setting:
                 toSettingActivity();
                 break;
-
 
         }
     }
@@ -264,7 +270,7 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
         adapter = new ImagePickerAdapter(getActivity(), selectImageList, MAX_IMG_COUNT);
         adapter.setOnItemClickListener(this);
 
-        LinearLayoutManager manager =  new LinearLayoutManager(getActivity());
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(manager);
         recyclerView.setHasFixedSize(true);
@@ -294,7 +300,7 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
                                 //打开选择,本次允许选择的数量
                                 ImagePicker.getInstance().setSelectLimit(MAX_IMG_COUNT - selectImageList.size());
                                 Intent intent = new Intent(getActivity(), ImageGridActivity.class);
-                                intent.putExtra(ImageGridActivity.EXTRAS_TAKE_PICKERS,true); // 是否是直接打开相机
+                                intent.putExtra(ImageGridActivity.EXTRAS_TAKE_PICKERS, true); // 是否是直接打开相机
                                 startActivityForResult(intent, REQUEST_CODE_SELECT);
                                 break;
                             case 1:
@@ -314,7 +320,7 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
                 Intent intentPreview = new Intent(getActivity(), ImagePreviewDelActivity.class);
                 intentPreview.putExtra(ImagePicker.EXTRA_IMAGE_ITEMS, (ArrayList<ImageItem>) adapter.getImages());
                 intentPreview.putExtra(ImagePicker.EXTRA_SELECTED_IMAGE_POSITION, position);
-                intentPreview.putExtra(ImagePicker.EXTRA_FROM_ITEMS,true);
+                intentPreview.putExtra(ImagePicker.EXTRA_FROM_ITEMS, true);
                 startActivityForResult(intentPreview, REQUEST_CODE_PREVIEW);
                 break;
         }
@@ -327,7 +333,7 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
             //添加图片返回
             if (data != null && requestCode == REQUEST_CODE_SELECT) {
                 ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
-                if (images != null){
+                if (images != null) {
                     selectImageList.addAll(images);
                     adapter.setImages(selectImageList);
                 }
@@ -336,7 +342,7 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
             //预览图片返回
             if (data != null && requestCode == REQUEST_CODE_PREVIEW) {
                 ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_IMAGE_ITEMS);
-                if (images != null){
+                if (images != null) {
                     selectImageList.clear();
                     selectImageList.addAll(images);
                     adapter.setImages(selectImageList);

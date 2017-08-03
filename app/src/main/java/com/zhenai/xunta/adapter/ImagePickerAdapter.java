@@ -84,6 +84,7 @@ public class ImagePickerAdapter extends RecyclerView.Adapter<ImagePickerAdapter.
     public class SelectedPicViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView iv_img;
+        //private RoundedImageView iv_img;
         private int clickPosition;
 
         public SelectedPicViewHolder(View itemView) {
@@ -97,7 +98,7 @@ public class ImagePickerAdapter extends RecyclerView.Adapter<ImagePickerAdapter.
             //根据item位置设置图片
             ImageItem item = mData.get(position);
             if (isAdded && position == getItemCount() - 1) {
-                iv_img.setImageResource(R.drawable.selector_image_add);
+                iv_img.setImageResource(R.drawable.fragment_me_add_picture);
                 clickPosition = IMAGE_ITEM_ADD;
             } else {
                 ImagePicker.getInstance().getImageLoader().displayImage((Activity) mContext, item.path, iv_img, 0, 0);

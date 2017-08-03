@@ -4,12 +4,21 @@
     <item android:state_pressed="true"><shape>
             <solid android:color="#CACACB" />
 
-            <corners android:bottomLeftRadius="5dp" android:bottomRightRadius="5dp" android:topLeftRadius="5dp" android:topRightRadius="5dp" />
-        </shape></item>
-    <item><shape>
+            <corners android:bottomLeftRadius="5dp"
+                     android:bottomRightRadius="5dp"
+                     android:topLeftRadius="5dp"
+                     android:topRightRadius="5dp" />
+        </shape>
+    </item>
+    <item>
+        <shape>
             <solid android:color="#EBEBEB" />
 
-            <corners android:bottomLeftRadius="5dp" android:bottomRightRadius="5dp" android:topLeftRadius="5dp" android:topRightRadius="5dp" />
-        </shape></item>
+            <corners android:bottomLeftRadius="5dp"
+                     android:bottomRightRadius="5dp"
+                     android:topLeftRadius="5dp"
+                     android:topRightRadius="5dp" />
+        </shape>
+    </item>
 
 </selector>
