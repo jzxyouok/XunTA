@@ -161,6 +161,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="16sp"
+            android:singleLine="true"
             android:text="未输入"/>
 
         <ImageButton
@@ -206,7 +207,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="16sp"
-            android:text="未输入"/>
+            android:singleLine="true"
+            android:text="未设置"/>
 
         <ImageButton
             android:id="@+id/imgBtn_relationship_status"
@@ -251,7 +253,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="16sp"
-            android:text="未输入"/>
+            android:singleLine="true"
+            android:text="未设置"/>
 
         <ImageButton
             android:id="@+id/imgBtn_profession_status"
@@ -296,7 +299,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="16sp"
-            android:text="未输入"/>
+            android:singleLine="true"
+            android:text="未设置"/>
 
         <ImageButton
             android:id="@+id/imgBtn_is_smoking"
@@ -341,7 +345,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="16sp"
-            android:text="未输入"/>
+            android:singleLine="true"
+            android:text="未设置"/>
 
         <ImageButton
             android:id="@+id/imgBtn_is_drinking"
@@ -361,50 +366,6 @@
         android:layout_marginRight="20dp"
         android:background="@color/colorPrimary"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/activity_setting_item_height"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:textSize="16sp"
-            android:text="擅长技能"/>
-
-        <TextView
-            android:id="@+id/tv_skills_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:textSize="16sp"
-            android:text="未输入"/>
-
-        <ImageButton
-            android:id="@+id/imgBtn_skill"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="30dp"
-            android:background="@drawable/arrow"/>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@color/colorPrimary"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -431,7 +392,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="16sp"
-            android:text="未输入"/>
+            android:singleLine="true"
+            android:text="未设置"/>
 
         <ImageButton
             android:id="@+id/imgBtn_hobby"
