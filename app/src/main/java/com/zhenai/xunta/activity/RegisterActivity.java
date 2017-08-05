@@ -285,9 +285,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     }
 
 
-
-
-
     private void toProtocol() {
         ScrollView sc = new ScrollView(this);
         sc.setBackgroundColor(getResources().getColor(R.color.white));

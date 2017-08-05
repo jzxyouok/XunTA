@@ -31,7 +31,7 @@
             android:text="颜值认证"/>
 
         <TextView
-            android:id="@+id/yanzhi_certification"
+            android:id="@+id/tv_yanzhi_certification"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -39,10 +39,10 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="18sp"
-            android:text="已认证"/>
+            android:text="未认证"/>
 
         <ImageButton
-            android:id="@+id/imgBtn_click"
+            android:id="@+id/imgBtn_yanzhi_certification"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="0.25"
@@ -73,10 +73,10 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="18sp"
-            android:text="颜值认证"/>
+            android:text="富豪认证"/>
 
         <TextView
-            android:id="@+id/fuhao_certification"
+            android:id="@+id/tv_fuhao_certification"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -87,7 +87,7 @@
             android:text="点击认证"/>
 
         <ImageButton
-            android:id="@+id/imgBtn_fuhao_click"
+            android:id="@+id/imgBtn_fuhao_certification"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="0.25"
@@ -119,10 +119,10 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="18sp"
-            android:text="颜值认证"/>
+            android:text="身份认证"/>
 
         <TextView
-            android:id="@+id/shiming_certification"
+            android:id="@+id/tv_id_certification"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -130,10 +130,10 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textSize="18sp"
-            android:text="认证未通过"/>
+            android:text="点击认证"/>
 
         <ImageButton
-            android:id="@+id/imgBtn_shiming_click"
+            android:id="@+id/imgBtn_id_certification"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="0.25"

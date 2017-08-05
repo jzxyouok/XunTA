@@ -27,7 +27,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.bigkoo.pickerview.TimePickerView;
@@ -51,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -90,10 +90,12 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     boolean isTimeSelected = false;
     boolean isDistrictSelected = false;
 
-    String resultCode;//注册返回码
-    public static final String REGISTER_SUCCESS = "1701031";
-    public static final String REGISTER_FAILURE= "1701032";
+    String dataResultCode, avatarResultCode;//注册的两个返回码
+    public static final String DATA_UPLOAD_SUCCESS = "1701031";
+    public static final String DATA_UPLOAD_FAILURE= "1701032";
 
+    public static final String AVATAR_UPLOAD_SUCCESS = "1702001";
+    public static final String AVATAR_UPLOAD_FAILURE = "1702002";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -196,15 +198,12 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 }else if(isTimeSelected == false){
                     ShowToast.showToast("请选择出生日期");
                 }else{
-
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             postPersonalData();
                         }
                     }).start();
-
-
                 }
                 break;
         }
@@ -213,21 +212,175 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     public void postPersonalData() {
 
         if (mRadioBtnMale.isChecked()){
-             sex = "男";
+             sex = "1";
         }else {
-             sex = "女";
+             sex = "0";
         }
 
+        //上传基本信息
+      /*  Map<String, String> personDataMap = new HashMap<>();
+        personDataMap.put("phone",phoneNumber);
+        personDataMap.put("password",password);
+        personDataMap.put("nickname",nickName);
+        personDataMap.put("sex",sex);
+        personDataMap.put("birthDate",birthDate);
+        personDataMap.put("birthPlace",districtName);
+
+        HttpUtil.sendPostMultiRequestWithOkHttp(ServerUrl.REGISTER_URL, personDataMap, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                ShowToast.showToast("服务器异常，请稍后重试~");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseData = response.body().string();
+
+                try {
+                    JSONObject jsonObject = new JSONObject(responseData);
+                    dataResultCode = jsonObject.getString("resultCode");
+                    Log.e("resultCode","dataResultCode:"+dataResultCode);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });*/
+
+        //上传图片
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("phone",phoneNumber)
+                .addFormDataPart("type","1")
+                .addFormDataPart("fileData", outputImageFile.getName(), RequestBody.create(MediaType.parse("image/jpeg"), outputImageFile))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(ServerUrl.UPLOAD_PHOTO_URL)
+                .post(requestBody)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            String responseData = response.body().string();
+            try {
+                JSONObject jsonObject = new JSONObject(responseData);
+                avatarResultCode = jsonObject.getString("resultCode");
+                Log.e("resultCode","avatarResultCode:" + avatarResultCode);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        OkHttpClient client1 = new OkHttpClient();
+
+        FormBody.Builder builder = new FormBody.Builder();
+        builder.add("phone",phoneNumber);
+        builder.add("password",password);
+        builder.add("nickname",nickName);
+        builder.add("sex",sex);
+        builder.add("birthDate",birthDate);
+        builder.add("birthPlace",districtName);
+
+        RequestBody requestBody1  = builder.build();
+
+        Request request1 = new Request.Builder()
+                .url(ServerUrl.REGISTER_URL)
+                .post(requestBody1)
+                .build();
+
+/*        RequestBody requestBody1 = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("phone",phoneNumber)
+                .addFormDataPart("password",password)
+                .addFormDataPart("nickname",nickName)
+                .addFormDataPart("sex",sex)
+                .addFormDataPart("birthDate",birthDate)
+                .addFormDataPart("birthPlace",districtName)
+                .build();*/
+
+/*        Log.e("personData","phone:" + phoneNumber);
+        Log.e("personData","password:" + password);
+        Log.e("personData","nickname:" + nickName);
+        Log.e("personData","sex:" + sex);
+        Log.e("personData","birthDate:" + birthDate);
+        Log.e("personData","districtName:" + districtName);
+        Log.e("personData","imageFile:" + outputImageFile.getName());*/
+
+/*        Request request1 = new Request.Builder()
+                .url(ServerUrl.REGISTER_URL)
+                .post(requestBody1)
+                .build();*/
+
+        try {
+            Response response1 = client1.newCall(request1).execute();
+            String responseData1 = response1.body().string();
+            try {
+                JSONObject jsonObject1 = new JSONObject(responseData1);
+                dataResultCode = jsonObject1.getString("resultCode");
+                Log.e("resultCode","dataResultCode:" + dataResultCode);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // TODO: 2017/8/4  判断
+       if (dataResultCode.equals(DATA_UPLOAD_SUCCESS) && avatarResultCode.equals(AVATAR_UPLOAD_SUCCESS)){ //注册成功
+           //保存资料（手机号等），便于下次直接登录
+           SharedPreferencesUtil.setParam(PersonalDataActivity.this,"phone",phoneNumber);
+           SharedPreferencesUtil.setParam(PersonalDataActivity.this,"nickName",nickName);
+           SharedPreferencesUtil.setParam(PersonalDataActivity.this,"sex",sex);
+           SharedPreferencesUtil.setParam(PersonalDataActivity.this,"birthDate",birthDate);
+           SharedPreferencesUtil.setParam(PersonalDataActivity.this,"districtName",districtName);
+
+           runOnUiThread(new Runnable() {
+               @Override
+               public void run() {
+                   ShowToast.showToast("恭喜您，注册成功~");
+               }
+           });
+           startActivity(new Intent(PersonalDataActivity.this, LoginActivity.class));//注册成功，跳转到登录页
+
+           finish();//销毁资料填写页面
+
+           //发广播销毁注册页面
+           Intent sendBroadCastIntent  = new Intent("com.xunta.FINISH_REGISTER_ACTIVITY__BROADCAST");
+           sendBroadcast(sendBroadCastIntent);
+
+       }else if(avatarResultCode.equals(AVATAR_UPLOAD_FAILURE)){
+           runOnUiThread(new Runnable() {
+               @Override
+               public void run() {
+                   ShowToast.showToast("头像上传失败");
+               }
+           });
+
+       } else {  //注册失败
+           runOnUiThread(new Runnable() {
+               @Override
+               public void run() {
+                   ShowToast.showToast("服务器异常，请稍后重试~");
+               }
+           });
+       }
+
+
+      /*  // TODO: 2017/8/1   向服务器POST String数据
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("phone",phoneNumber)
                 .addFormDataPart("password",password)
-                .addFormDataPart("nickName",nickName)
+                .addFormDataPart("nickname",nickName)
                 .addFormDataPart("sex",sex)
                 .addFormDataPart("birthDate",birthDate)
-                .addFormDataPart("districtName",districtName)
-                .addFormDataPart("avatar", "atatar.jpg", RequestBody.create(MediaType.parse("image/jpeg"), outputImageFile))
+                .addFormDataPart("birthPlace",districtName)
+                .addFormDataPart("avatars", outputImageFile.getName(), RequestBody.create(MediaType.parse("image/jpeg"), outputImageFile))
                 .build();
 
         Request request = new Request.Builder()
@@ -240,33 +393,21 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
 
             JSONObject jsonObject = new JSONObject(responseData);
             resultCode = jsonObject.getString("resultCode");
-            if (resultCode.equals(REGISTER_SUCCESS)){ //注册成功
 
-                // TODO: 2017/8/1   向服务器POST数据
-                startActivity(new Intent(PersonalDataActivity.this, LoginActivity.class));//注册成功，跳转到登录页
-
-                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"phone",phoneNumber);//保存手机号，便于下次直接登录
-                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"nickName",nickName);
-                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"sex",sex);
-                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"birthDate",birthDate);
-                SharedPreferencesUtil.setParam(PersonalDataActivity.this,"districtName",districtName);
-
-                finish();//销毁资料填写页面
-
-                //发广播销毁注册页面
-                Intent sendBroadCastIntent  = new Intent("com.xunta.FINISH_REGISTER_ACTIVITY__BROADCAST");
-                sendBroadcast(sendBroadCastIntent);
-                //Log.e("resultCode",responseData);
-
-            }else {//注册失败
-
-            }
+            Log.e("personData","ResultCode:" + resultCode);
+            Log.e("personData","phone:" + phoneNumber);
+            Log.e("personData","password:" + password);
+            Log.e("personData","nickname:" + nickName);
+            Log.e("personData","sex:" + sex);
+            Log.e("personData","birthDate:" + birthDate);
+            Log.e("personData","districtName:" + districtName);
+            Log.e("personData","imageFile:" + outputImageFile.getName());
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
@@ -316,7 +457,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
 
     public void openAlbum() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
-        intent.setType("image/*");
+        intent.setType("image/*");//选择图片
         startActivityForResult(intent, CHOOSE_PHOTO); // 打开相册
     }
 
@@ -327,7 +468,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    Toast.makeText(this, "您取消了权限~", Toast.LENGTH_SHORT).show();
+                    ShowToast.showToast("您取消了权限~");
                 }
                 break;
             default:
@@ -345,6 +486,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
                         mLinearLayoutAvatar.setBackground(new BitmapDrawable(bitmap));
                         mTvHint.setVisibility(View.INVISIBLE);
+                        isImageUploaded = true;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -388,6 +530,9 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
             // 如果是file类型的Uri，直接获取图片路径即可
             imagePath = uri.getPath();
         }
+
+        outputImageFile = new File(imagePath);
+
         displayImage(imagePath); // 根据图片路径显示图片
     }
 

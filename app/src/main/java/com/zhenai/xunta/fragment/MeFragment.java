@@ -39,6 +39,7 @@ import com.zhenai.xunta.widget.GlideRoundTransform;
 import com.zhenai.xunta.widget.ItemLinearLayout;
 import com.zhenai.xunta.widget.SelectDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +136,9 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
         userID = (String) SharedPreferencesUtil.getParam(getActivity(), "userID", "");
         selfIntroduction = (String) SharedPreferencesUtil.getParam(getActivity(), "selfIntroduction", "");
         if ((nickName.equals("")) || (userID.equals("")) || (selfIntroduction.equals(""))) {//本地没有数据，请求服务器
+
             // TODO: 2017/8/2 向服务器请求数据
+
         } else {
             mTvNickname.setText(nickName);
             mTvUserID.setText(userID);
@@ -300,7 +303,7 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
                                 //打开选择,本次允许选择的数量
                                 ImagePicker.getInstance().setSelectLimit(MAX_IMG_COUNT - selectImageList.size());
                                 Intent intent = new Intent(getActivity(), ImageGridActivity.class);
-                                intent.putExtra(ImageGridActivity.EXTRAS_TAKE_PICKERS, true); // 是否是直接打开相机
+                                intent.putExtra(ImageGridActivity.EXTRAS_TAKE_PICKERS, true); // 是否直接打开相机
                                 startActivityForResult(intent, REQUEST_CODE_SELECT);
                                 break;
                             case 1:
@@ -336,10 +339,18 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
                 if (images != null) {
                     selectImageList.addAll(images);
                     adapter.setImages(selectImageList);
+
+                    // TODO: 2017/8/4 图片上传到服务器
+                    for (int i = 0; i< selectImageList.size(); i++){
+                        String path = selectImageList.get(i).path;
+                        File imageFile = new File(path);
+                    }
                 }
+
+
             }
         } else if (resultCode == ImagePicker.RESULT_CODE_BACK) {
-            //预览图片返回
+            //预览图片返回，可能有删除
             if (data != null && requestCode == REQUEST_CODE_PREVIEW) {
                 ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_IMAGE_ITEMS);
                 if (images != null) {

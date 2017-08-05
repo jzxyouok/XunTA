@@ -1,9 +1,12 @@
 package com.zhenai.xunta.utils;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -53,9 +56,25 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    //POST请求，上传图片文件
+    public static void sendFileWithOkHttp(String address,String name, File imageFile, okhttp3.Callback callback){
+        //OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart(name, imageFile.getName(), RequestBody.create(MediaType.parse("image/jpeg"), imageFile))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(address)
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
+
     //POST请求，提交多个参数
     public static void sendPostMultiRequestWithOkHttp(String address, Map<String,String> map, okhttp3.Callback callback){
-        //OkHttpClient client = new OkHttpClient();
 
         //设置超时时间
         OkHttpClient client = new OkHttpClient.Builder()

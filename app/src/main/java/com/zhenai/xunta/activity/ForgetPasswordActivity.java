@@ -117,7 +117,7 @@ public class ForgetPasswordActivity extends BaseActivity implements View.OnClick
 
                     mTimeCount.start();
                     btnClickedCount++;
-                    // Log.e("tag", "btnClickedCount:" +btnClickedCount + "");
+
                 }else if(btnClickedCount > 3){
                     ShowToast.showToast("操作太频繁，请明天再试~");
                 }else {

@@ -20,6 +20,9 @@ public  class ServerUrl {
     // 注册
     public static final String REGISTER_URL = "http://10.1.3.33:8080/register";
 
+    //图片
+    public static final String UPLOAD_PHOTO_URL = "http://10.1.3.33:8080/photo/uploadMultiPhoto";
+
     //退出
     public static final String LOG_OUT_URL = "http://10.1.3.33:8080/logout";
 

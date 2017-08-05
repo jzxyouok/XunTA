@@ -46,5 +46,11 @@
         <item name="android:windowBackground">@drawable/photo_choose_bg</item>
     </style>
 
+    <!--等待加载圈-->
+    <style name="loading_dialog" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 
 </resources>
