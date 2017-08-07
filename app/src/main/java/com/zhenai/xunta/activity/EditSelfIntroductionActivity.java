@@ -28,7 +28,7 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
     private EditText mEtSelfIntroduction;
     private int length; //内心独白长度
     private static final int REQUIRED_MINIMUM_LENGTH = 6;//要求的最短长度
-    private static final int REQUIRED_MAXIMUM_LENGTH = 20;//要求的最短长度
+    private static final int REQUIRED_MAXIMUM_LENGTH = 20;//要求的最长长度
     private String selfIntroduction;
 
     @Override
@@ -69,7 +69,7 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
 
             case R.id.tv_save_self_introduction:
                 if (length < REQUIRED_MINIMUM_LENGTH){
-                    ShowToast.showToast("请至少输入" + REQUIRED_MINIMUM_LENGTH +"字~");
+                    ShowToast.showToast("请至少输入" + REQUIRED_MINIMUM_LENGTH +"个字~");
                 }else if (length > REQUIRED_MAXIMUM_LENGTH){
                     ShowToast.showToast("输入过多哦~");
                 }else {
@@ -97,7 +97,7 @@ public class EditSelfIntroductionActivity extends BaseActivity implements View.O
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (length < REQUIRED_MINIMUM_LENGTH){
-                    ShowToast.showToast("请至少输入" + REQUIRED_MINIMUM_LENGTH +"字~");
+                    ShowToast.showToast("请至少输入" + REQUIRED_MINIMUM_LENGTH +"个字~");
                 }else if (length > REQUIRED_MAXIMUM_LENGTH){
                     ShowToast.showToast("输入过多哦~");
                 }else {

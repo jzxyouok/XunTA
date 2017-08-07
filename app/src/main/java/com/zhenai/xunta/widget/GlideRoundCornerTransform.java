@@ -12,17 +12,18 @@ import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
 /**
+ * Glide加载圆角ImageView
  * Created by wenjing.tang on 2017/8/3.
  */
 
-public class GlideRoundTransform extends BitmapTransformation {
+public class GlideRoundCornerTransform extends BitmapTransformation {
     private static float radius = 0f;
 
-    public GlideRoundTransform(Context context) {
+    public GlideRoundCornerTransform(Context context) {
         this(context, 4);
     }
 
-    public GlideRoundTransform(Context context, int dp) {
+    public GlideRoundCornerTransform(Context context, int dp) {
         super(context);
         this.radius = Resources.getSystem().getDisplayMetrics().density * dp;
     }
@@ -47,6 +48,7 @@ public class GlideRoundTransform extends BitmapTransformation {
         canvas.drawRoundRect(rectF, radius, radius, paint);
         return result;
     }
+
 
     @Override public String getId() {
         return getClass().getName() + Math.round(radius);

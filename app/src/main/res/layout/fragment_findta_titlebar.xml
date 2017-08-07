@@ -5,11 +5,10 @@
     android:layout_height="60dp"
     android:background="@color/blue">
 
-
     <RelativeLayout
         android:id="@+id/layout_fragment_findta_title"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="45dp">
 
         <ImageButton
             android:id="@+id/imgBtn_search"

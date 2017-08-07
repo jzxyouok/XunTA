@@ -35,7 +35,7 @@ import com.zhenai.xunta.presenter.MeFragmentPresenter;
 import com.zhenai.xunta.utils.GlideImageLoader;
 import com.zhenai.xunta.utils.SharedPreferencesUtil;
 import com.zhenai.xunta.view.IMeFragmentView;
-import com.zhenai.xunta.widget.GlideRoundTransform;
+import com.zhenai.xunta.widget.GlideRoundCornerTransform;
 import com.zhenai.xunta.widget.ItemLinearLayout;
 import com.zhenai.xunta.widget.SelectDialog;
 
@@ -146,10 +146,9 @@ public class MeFragment extends Fragment implements IMeFragmentView, View.OnClic
         }
 
         //设置头像
-        int resource = R.drawable.pic1;
         Glide.with(this)
-                .load(resource)
-                .transform(new GlideRoundTransform(getActivity(), 10))
+                .load(R.drawable.pic1)
+                .transform(new GlideRoundCornerTransform(getActivity(), 10)) //圆角；圆形 .transform(new GlideRoundCornerTransform(getActivity())
                 .into(mIvAtatar);
     }
 

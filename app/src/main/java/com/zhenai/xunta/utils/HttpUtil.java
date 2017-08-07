@@ -59,7 +59,14 @@ public class HttpUtil {
     //POST请求，上传图片文件
     public static void sendFileWithOkHttp(String address,String name, File imageFile, okhttp3.Callback callback){
         //OkHttpClient client = new OkHttpClient();
-        OkHttpClient client = new OkHttpClient();
+
+        //设置超时时间
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build();
+
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart(name, imageFile.getName(), RequestBody.create(MediaType.parse("image/jpeg"), imageFile))
@@ -69,6 +76,7 @@ public class HttpUtil {
                 .url(address)
                 .post(requestBody)
                 .build();
+
         client.newCall(request).enqueue(callback);
     }
 
@@ -96,5 +104,6 @@ public class HttpUtil {
                 .build();
         client.newCall(request).enqueue(callback);
     }
+
 
 }

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="348dp"
+        android:layout_height="348dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/pic1" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_tag"
+        android:layout_width="112dp"
+        android:layout_height="112dp"
+        android:src="@drawable/pic1" />
+
+    <LinearLayout
+        android:id="@+id/ll_username_and_age"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_avatar"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/tv_username"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            tools:text="共度余生"/>
+        <TextView
+            android:id="@+id/tv_age"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            tools:text="21岁"
+            android:singleLine="true"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/LightGrey"
+        android:layout_below="@+id/ll_username_and_age"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"/>
+
+    <LinearLayout
+        android:id="@+id/ll_time_and_place"
+        android:layout_width="340dp"
+        android:layout_height="20dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/view"
+        android:layout_centerHorizontal="true"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            tools:background="@drawable/pic1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            tools:text="16:30"
+            android:singleLine="true"/>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="20dp"
+            tools:background="@drawable/pic1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:layout_gravity="center_vertical"
+            tools:text="深圳南山"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_activity_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_time_and_place"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:maxLines="5"
+        tools:text="过惯了一个人的生活，但偶尔也想要人陪过惯了一个人的生活，但偶尔也想要人陪"/>
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_activity_description"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/red"
+        tools:text="¥320"/>
+
+
+
+
+</RelativeLayout>

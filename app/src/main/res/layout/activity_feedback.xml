@@ -5,14 +5,27 @@
               android:layout_height="match_parent">
 
 
-    <com.zhenai.xunta.widget.CustomizedTitleBar
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        app:title_back_icon_visible="true"
-        app:title_back_icon="@drawable/arrow_left"
-        app:title_text="设置"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
-    </com.zhenai.xunta.widget.CustomizedTitleBar>
+        android:layout_height="60dp"
+        android:background="@color/blue">
+
+        <ImageButton
+            android:id="@+id/imgBtn_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/arrow_left"/>
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:textSize="16dp"
+            android:text="反馈"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,6 +33,7 @@
         android:layout_marginBottom="20dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/btn_border_bg">
 
         <EditText
@@ -43,7 +57,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/submit_feedback"
+        android:id="@+id/btn_submit_feedback"
         android:layout_width="200dp"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"

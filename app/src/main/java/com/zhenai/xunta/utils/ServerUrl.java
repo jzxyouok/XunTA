@@ -26,6 +26,8 @@ public  class ServerUrl {
     //退出
     public static final String LOG_OUT_URL = "http://10.1.3.33:8080/logout";
 
+    //颜值评分
+    public static final String FACE_SCORE_URL = "http://10.1.3.33:8080/faceAuth/getFaceScore";
 
 
 }

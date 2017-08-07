@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:useLevel="false" >
+    <solid android:color="@color/orange_alpha"/>
+
+    <!--边框宽度-->
+    <size android:width="20dp"
+        android:height="20dp"/>
+
+    <corners android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:bottomLeftRadius="10dp" />
+    <!--圆角矩形白色背景-->
+
+
+</shape>
+

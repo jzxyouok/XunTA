@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+    <RelativeLayout
+         android:layout_width="match_parent"
+         android:layout_height="45dp"
+         android:background="@color/title_color_orange">
+
+        <ImageButton
+            android:id="@+id/ib_title_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/arrow_left"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:textSize="16dp"
+            android:text="活动陪伴"/>
+
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="21dp">
+
+        <ImageView
+            android:id="@+id/iv_activity"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"/>
+
+        <Button
+            android:id="@+id/btn_activity"
+            android:layout_width="100dp"
+            android:layout_height="20dp"
+            android:textSize="13sp"
+            android:layout_marginStart="11dp"
+            android:layout_toRightOf="@+id/iv_activity"
+            android:layout_centerVertical="true"
+            android:text="选择要发布的活动"/>
+
+        <ImageButton
+            android:id="@+id/ib_clear_activity"
+            android:layout_width="19dp"
+            android:layout_height="19dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"/>
+
+        <View
+            android:id="@+id/view_activity"
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:layout_below="@+id/iv_activity"
+            android:layout_marginTop="14dp"
+            android:background="@color/LightLightGrey"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginTop="6dp">
+
+        <EditText
+            android:id="@+id/et_activity_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="start"
+            android:background="@null"
+            android:textSize="14sp"
+            android:hint="增加活动描述，让大家更了解你..."/>
+        <TextView
+            android:id="@+id/tv_words_count"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="0/30"/>
+        <View
+            android:id="@+id/view_release"
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:layout_below="@+id/tv_words_count"
+            android:background="@color/LightLightGrey"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginStart="18dp"
+
+        android:layout_marginTop="18dp">
+
+        <ImageView
+            android:id="@+id/iv_place"
+            android:layout_width="20dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"/>
+
+        <Button
+            android:id="@+id/btn_place"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:layout_marginStart="11dp"
+            android:layout_toRightOf="@+id/iv_place"
+            android:layout_centerVertical="true"
+            android:text="aa"
+            android:textSize="14sp"/>
+
+        <ImageButton
+            android:id="@+id/ib_clear_place"
+            android:layout_width="19dp"
+            android:layout_height="19dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+
+        <View
+            android:id="@+id/view_place"
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:layout_below="@+id/iv_place"
+            android:layout_marginTop="14dp"
+            android:background="@color/LightLightGrey"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="21dp">
+
+        <ImageView
+            android:id="@+id/iv_price"
+            android:layout_width="20dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"/>
+
+        <EditText
+            android:id="@+id/et_price"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:textSize="14sp"
+            android:layout_marginStart="11dp"
+            android:layout_toRightOf="@+id/iv_price"
+            android:layout_centerVertical="true"/>
+
+
+        <ImageButton
+            android:id="@+id/ib_clear_price"
+            android:layout_width="19dp"
+            android:layout_height="19dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"/>
+
+        <View
+            android:id="@+id/view_price"
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:layout_below="@+id/iv_price"
+            android:layout_marginTop="14dp"
+            android:background="@color/LightLightGrey"/>
+
+    </RelativeLayout>
+
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    
+    <Button
+        android:id="@+id/btn_release_activity"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@color/title_color_orange"
+        android:text="发布"/>
+
+</LinearLayout>

@@ -8,7 +8,12 @@ import android.widget.Toast;
  */
 
 public class ShowToast {
+
     public static void showToast(String toastString){
         Toast.makeText(MyApplication.getContext(),toastString, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showLongToast(String toastString){
+        Toast.makeText(MyApplication.getContext(),toastString, Toast.LENGTH_LONG).show();
     }
 }

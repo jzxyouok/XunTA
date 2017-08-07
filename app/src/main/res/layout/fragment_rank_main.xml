@@ -36,11 +36,20 @@
 
     </RadioGroup>
 
+    <com.youth.banner.Banner
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/rank_banner"
+        android:layout_below="@+id/rg_rank"
+        android:layout_width="match_parent"
+        app:indicator_drawable_selected = "@drawable/banner_selected_bg"
+        app:indicator_drawable_unselected = "@drawable/banner_unselected_bg"
+        android:layout_height="120dp" />
+
     <FrameLayout
         android:id="@+id/framelayout_rank_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/rg_rank">
+        android:layout_below="@+id/rank_banner">
     </FrameLayout>
 
 

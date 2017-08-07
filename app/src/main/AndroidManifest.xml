@@ -72,6 +72,7 @@
         <activity android:name=".activity.EditSelfIntroductionActivity"/>
         <activity android:name=".activity.FuhaoCertificationActivity"/>
         <activity android:name=".activity.IDCertificationActivity"/>
+        <activity android:name=".activity.ReleaseActivity"/>
 
 
     </application>

@@ -9,12 +9,15 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.nanchen.compresshelper.CompressHelper;
 import com.zhenai.xunta.R;
 import com.zhenai.xunta.utils.HttpUtil;
+import com.zhenai.xunta.utils.ServerUrl;
 import com.zhenai.xunta.utils.SharedPreferencesUtil;
 import com.zhenai.xunta.utils.ShowToast;
 import com.zhenai.xunta.widget.LoadingCustomDialog;
@@ -26,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.Response;
 
 /**
@@ -42,9 +44,9 @@ public class MyCertificationActivity extends BaseActivity implements View.OnClic
     private String yanzhiCertificationStatus, fuhaoCertificationStatus, IDCertificationStatus;
 
     public static final int TAKE_PHOTO = 1;
-    File outputImageFile;
+    File outputImageFile, compressedImageFile;
     private Uri imageUri;
-    int faceScore;
+    String faceScore;
 
     //认证三种状态
     private static final String HAS_CERTIFICATED = "已认证";
@@ -112,7 +114,7 @@ public class MyCertificationActivity extends BaseActivity implements View.OnClic
 
     public void takePhoto(){
         // 创建File对象，用于存储拍照后的图片
-        outputImageFile = new File(getExternalCacheDir(), "yanzhi_certification.jpg");
+        outputImageFile = new File(getExternalCacheDir(), "face_score_certification.jpg");
         try {
             if (outputImageFile.exists()) {
                 outputImageFile.delete();
@@ -139,50 +141,86 @@ public class MyCertificationActivity extends BaseActivity implements View.OnClic
                 if (resultCode == RESULT_OK) {
                     try {
                         new Thread(new Runnable() {
+
                             @Override
                             public void run() {
 
-                                LoadingCustomDialog.showProgress(MyCertificationActivity.this, "正在认证颜值~", true);//显示dialog
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        LoadingCustomDialog.showProgress(MyCertificationActivity.this, "正在认证颜值~", true);//显示dialog
+                                    }
+                                });
 
-                                // TODO: 2017/8/4 没对接口 拿到分数
-                                HttpUtil.sendFileWithOkHttp("xxx", "facePhoto",outputImageFile, new Callback() { //将照片上传到服务器
+                                compressedImageFile = CompressHelper.getDefault(MyCertificationActivity.this).compressToFile(outputImageFile); //图像压缩
+
+                                // TODO: 2017/8/4  拿到分数
+                                HttpUtil.sendFileWithOkHttp(ServerUrl.FACE_SCORE_URL, "file", compressedImageFile, new okhttp3.Callback() { //将照片上传到服务器
+
                                     @Override
                                     public void onFailure(Call call, IOException e) {
-                                        ShowToast.showToast("上传失败，请稍后再试~");
+                                        Log.e("faceScore",compressedImageFile.getName() + "onFailure");
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ShowToast.showToast("上传失败，请稍后再试~");
+                                            }
+                                        });
+                                        LoadingCustomDialog.dismissProgress();
                                     }
 
                                     @Override
                                     public void onResponse(Call call, Response response) throws IOException {
 
-                                        LoadingCustomDialog.dismissProgress();
-
                                         String responseData = response.body().string();
 
                                         try {
+                                            Log.e("faceScore",compressedImageFile.getName()+ "onResponse");
+                                            Log.e("faceScore",responseData);
+
                                             JSONObject jsonObject = new JSONObject(responseData);
-                                            faceScore = jsonObject.getInt("score"); //获取分数
+                                            faceScore = jsonObject.getString("data");
+                                            Log.e("faceScore",faceScore );
+
+                                            // 从服务器拿到分数 ，如果分数>80，设置textview为已认证，否则设为认证未通过
+                                            if (Integer.parseInt(faceScore) >= 80){
+                                                yanzhiCertificationStatus = HAS_CERTIFICATED;
+
+                                                SharedPreferencesUtil.setParam(MyCertificationActivity.this,"yanzhiCertificationStatus", yanzhiCertificationStatus);
+
+                                                LoadingCustomDialog.dismissProgress();
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mTvYanzhiCertification.setText(HAS_CERTIFICATED);
+                                                        showFaceScoreHighDialog();
+                                                    }
+                                                });
+
+                                            }else if(Integer.parseInt(faceScore) < 80){
+
+                                                yanzhiCertificationStatus = FAIL_TO_PASS_CERTIFICATION;
+                                                LoadingCustomDialog.dismissProgress();
+
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        mTvYanzhiCertification.setText(FAIL_TO_PASS_CERTIFICATION);
+                                                        showFaceScoreLowDialog();
+                                                    }
+                                                });
+
+                                            }
+
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
 
                                     }
                                 });
+
                             }
                         }).start();
-
-
-                        // 从服务器拿到分数 ，如果分数>80，设置textview为已认证，否则设为认证未通过
-                       // faceScore = 70; //模拟后台数据
-                        if (faceScore >= 80){
-                            yanzhiCertificationStatus = HAS_CERTIFICATED;
-                            mTvYanzhiCertification.setText(HAS_CERTIFICATED);
-                            SharedPreferencesUtil.setParam(this,"yanzhiCertificationStatus", yanzhiCertificationStatus);
-                            showFaceScoreHighDialog();
-                        }else {
-                            yanzhiCertificationStatus = FAIL_TO_PASS_CERTIFICATION;
-                            mTvYanzhiCertification.setText(FAIL_TO_PASS_CERTIFICATION);
-                            showFaceScoreLowDialog();
-                        }
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -197,7 +235,9 @@ public class MyCertificationActivity extends BaseActivity implements View.OnClic
 
     private void showFaceScoreHighDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("颜值认证成功");
         builder.setMessage("颜值"+faceScore+ "分！" +"\n哎呀，你颜值真高！\n继续进行车房认证可以和更多人相约哟！");
+
         builder.setNegativeButton("直接进入APP", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -213,12 +253,15 @@ public class MyCertificationActivity extends BaseActivity implements View.OnClic
 
             }
         });
-        builder.show();
+        AlertDialog dialog= builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 
     private void showFaceScoreLowDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("颜值"+faceScore+ "分！" + "哎呀，你颜值不够哦！\n进行车房认证也可以进入APP可以和更多人相约哟！\n或者换个角度,重新拍摄吧");
+        builder.setTitle("颜值认证失败");
+        builder.setMessage("颜值"+faceScore+ "分！" + "哎呀，你颜值还差一丢丢哦！\n进行车房认证也可以进入APP可以和更多人相约哟！\n或者换个角度,重新拍摄吧");
         builder.setNegativeButton("车房认证", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -233,6 +276,9 @@ public class MyCertificationActivity extends BaseActivity implements View.OnClic
                 takePhoto();
             }
         });
-        builder.show();
+        //builder.show();
+        AlertDialog dialog= builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
     }
 }
