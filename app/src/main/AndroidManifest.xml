@@ -39,7 +39,7 @@
         <!--android:theme="@style/AppTheme.Full"-->
         <!-- android:theme="@style/AppTheme"--> <!--原来的AppTheme-->
         <!-- android:theme="@style/AppSplash"-->
-        <activity android:name=".activity.RegisterActivity"
+        <activity android:name=".activity.MainActivity"
                   android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,10 +49,10 @@
         </activity>
 
         <activity android:name=".activity.SplashActivity"/>
-        <activity android:name=".activity.MainActivity"/>
+<!--        <activity android:name=".activity.MainActivity"/>-->
         <activity android:name=".activity.LaunchActivity"/>
         <activity android:name=".activity.LoginActivity"/>
-        <!--<activity android:name=".activity.RegisterActivity"/>-->
+        <activity android:name=".activity.RegisterActivity"/>
 
         <activity android:name=".activity.ForgetPasswordActivity"/>
         <activity android:name=".activity.PersonalDataActivity"/>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.zhenai.xunta.R;
 
 /**
+ * 寻TA fragment
  * Created by wenjing.tang on 2017/7/25.
  */
 
